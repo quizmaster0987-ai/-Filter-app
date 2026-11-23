@@ -89,5 +89,7 @@ startBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',
 flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';if(stream)startCamera()});
 captureBtn.addEventListener('click',()=>{if(!stream)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.save();if(facing==='user'){ctx.translate(w,0);ctx.scale(-1,1)}ctx.filter=filterCss;ctx.drawImage(video,0,0,w,h);ctx.restore();if(emoji){ctx.font=Math.floor(w*.18)+'px sans-serif';ctx.textAlign='center';ctx.fillText(emoji,w/2,h/2)}const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();status('Photo saved to your Downloads/Gallery.')});
 window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop())});
+// Open the camera as soon as the app loads; the browser will ask for permission if needed.
+window.addEventListener('load',()=>startCamera());
 </script>
 </body></html>
