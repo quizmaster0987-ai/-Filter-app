@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17151f">
+<title>Filter Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#111018;--panel:#201e2b;--pink:#ff8eb7;--text:#fff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#33243b 0,#111018 45%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{padding:20px 18px 12px;text-align:center}h1{font-size:24px;margin:0;letter-spacing:.4px}header p{margin:5px 0 0;color:#c8bdce;font-size:13px}
+main{width:min(100%,560px);margin:auto;padding:10px 14px 28px}
+.camera{position:relative;overflow:hidden;border-radius:28px;background:#09080c;aspect-ratio:3/4;box-shadow:0 18px 50px #0008;border:1px solid #ffffff22}
+video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);transition:filter .2s}
+.camera.off video{display:none}.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:#d7cddd;padding:25px;gap:12px}.placeholder .cam{font-size:48px}
+.camera.live .placeholder{display:none}
+.overlay{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center;font-size:clamp(55px,17vw,105px);text-shadow:0 4px 18px #0008}
+.topline{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.pill{background:#08070bb8;border:1px solid #ffffff25;border-radius:99px;padding:7px 11px;font-size:12px;backdrop-filter:blur(12px)}
+.controls{display:flex;gap:10px;margin:14px 0;justify-content:center;flex-wrap:wrap}
+button{border:0;border-radius:15px;padding:12px 16px;background:#302c3d;color:white;font-weight:650;font-size:14px;cursor:pointer}
+button.primary{background:linear-gradient(135deg,#ff8eb7,#b68bff);color:#201323}
+button:disabled{opacity:.4;cursor:not-allowed}
+.section-title{font-size:14px;font-weight:700;margin:18px 2px 10px;color:#e8dfea}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.filter{padding:10px 5px;background:var(--panel);border:1px solid #ffffff12;border-radius:16px;text-align:center;font-size:12px}
+.filter .sample{height:48px;border-radius:11px;margin-bottom:7px;background:linear-gradient(135deg,#e6b8a2,#8264a7 55%,#e9d5b2)}
+.filter[aria-pressed=true]{outline:2px solid var(--pink);background:#392a3e}
+.filter small{display:block;color:#cbbfd0;font-size:10px;margin-top:2px}
+.note{font-size:12px;color:#bdb2c4;line-height:1.5;margin:16px 3px}
+#status{min-height:20px;text-align:center;color:#ffd4e4;font-size:13px;margin:6px}
+@media(min-width:520px){main{padding-top:16px}.camera{aspect-ratio:4/5}.filters{grid-template-columns:repeat(6,1fr)}}
+</style>
+</head>
+<body>
+<header><h1>✨ Filter Studio</h1><p>Live camera filters • Capture your moment</p></header>
+<main>
+<div class="camera off" id="camera">
+ <video id="video" autoplay playsinline muted></video>
+ <div class="placeholder"><div class="cam">📸</div><strong>Your camera preview will appear here</strong><span>Tap “Start camera” and allow camera access.</span></div>
+ <div class="overlay" id="overlay"></div>
+ <div class="topline"><span class="pill" id="activeName">Natural</span><span class="pill">LIVE</span></div>
+</div>
+<div class="controls">
+ <button class="primary" id="start">Start camera</button>
+ <button id="flip" disabled>↔ Flip</button>
+ <button id="capture" disabled>◎ Capture</button>
+ <button id="stop" disabled>Stop</button>
+</div>
+<div id="status" role="status"></div>
+<div class="section-title">Choose your filter</div>
+<div class="filters" id="filters">
+ <button class="filter" data-name="Natural" data-css="none" aria-pressed="true"><div class="sample"></div>Natural<small>Original</small></button>
+ <button class="filter" data-name="Glow" data-css="brightness(1.12) contrast(.94) saturate(1.18)"><div class="sample" style="filter:brightness(1.12) saturate(1.18)"></div>Glow<small>Soft light</small></button>
+ <button class="filter" data-name="Warm" data-css="sepia(.28) saturate(1.25)"><div class="sample" style="filter:sepia(.28) saturate(1.25)"></div>Warm<small>Golden</small></button>
+ <button class="filter" data-name="Vintage" data-css="sepia(.48) contrast(.9) saturate(.8)"><div class="sample" style="filter:sepia(.48) contrast(.9)"></div>Vintage<small>Retro</small></button>
+ <button class="filter" data-name="Dreamy" data-css="brightness(1.12) saturate(.82) blur(.25px)"><div class="sample" style="filter:brightness(1.12) saturate(.82)"></div>Dreamy<small>Soft</small></button>
+ <button class="filter" data-name="Cool" data-css="hue-rotate(12deg) saturate(1.12)"><div class="sample" style="filter:hue-rotate(12deg) saturate(1.12)"></div>Cool<small>Fresh</small></button>
+ <button class="filter" data-name="B&W" data-css="grayscale(1)"><div class="sample" style="filter:grayscale(1)"></div>B&W<small>Classic</small></button>
+ <button class="filter" data-name="Pink" data-css="hue-rotate(325deg) saturate(1.2) brightness(1.05)"><div class="sample" style="filter:hue-rotate(325deg) saturate(1.2)"></div>Pink<small>Rosy</small></button>
+ <button class="filter" data-name="Sepia" data-css="sepia(1)"><div class="sample" style="filter:sepia(1)"></div>Sepia<small>Classic tone</small></button>
+ <button class="filter" data-name="Vivid" data-css="saturate(1.8) contrast(1.08)"><div class="sample" style="filter:saturate(1.8)"></div>Vivid<small>Bright color</small></button>
+ <button class="filter" data-name="Soft" data-css="brightness(1.08) contrast(.82) saturate(.9)"><div class="sample" style="filter:brightness(1.08) contrast(.82)"></div>Soft<small>Gentle</small></button>
+ <button class="filter" data-name="Neon" data-css="saturate(1.7) hue-rotate(25deg) contrast(1.15)"><div class="sample" style="filter:saturate(1.7) hue-rotate(25deg)"></div>Neon<small>Bold</small></button>
+</div>
+<div class="section-title">Fun overlays</div>
+<div class="controls" id="overlays">
+ <button data-emoji="">None</button><button data-emoji="✨">✨ Sparkles</button><button data-emoji="💗">💗 Hearts</button><button data-emoji="🌸">🌸 Flowers</button><button data-emoji="😎">😎 Cool</button>
+</div>
+<p class="note">Camera access works on HTTPS (GitHub Pages) and requires your permission. This first version has live color filters and decorative overlays; Snapchat-style face-tracking lenses need a separate face-tracking model.</p>
+</main>
+<script>
+const video=document.querySelector('#video'),camera=document.querySelector('#camera'),startBtn=document.querySelector('#start'),flipBtn=document.querySelector('#flip'),captureBtn=document.querySelector('#capture'),stopBtn=document.querySelector('#stop'),statusEl=document.querySelector('#status'),activeName=document.querySelector('#activeName'),overlay=document.querySelector('#overlay');
+let stream=null,facing='user',filterCss='none',filterName='Natural',emoji='';
+function status(s){statusEl.textContent=s}
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){status('Camera is unavailable. Open this app using its HTTPS GitHub Pages link.');return}
+ try{if(stream)stream.getTracks().forEach(t=>t.stop());
+ stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});
+ video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');applyFilter();
+ startBtn.disabled=true;flipBtn.disabled=false;captureBtn.disabled=false;stopBtn.disabled=false;status('Camera is ready. Choose a filter!')}
+ catch(e){status(e.name==='NotAllowedError'?'Please allow camera permission in your browser.':'Could not start camera. Check camera permission and try again.')}
+}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;camera.classList.add('off');camera.classList.remove('live');startBtn.disabled=false;flipBtn.disabled=true;captureBtn.disabled=true;stopBtn.disabled=true;status('Camera stopped.')}
+function applyFilter(){video.style.filter=filterCss;activeName.textContent=filterName;overlay.textContent=emoji}
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');filterCss=b.dataset.css;filterName=b.dataset.name;applyFilter()}));
+document.querySelectorAll('#overlays button').forEach(b=>b.addEventListener('click',()=>{emoji=b.dataset.emoji;applyFilter()}));
+startBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',stopCamera);
+flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';if(stream)startCamera()});
+captureBtn.addEventListener('click',()=>{if(!stream)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.save();if(facing==='user'){ctx.translate(w,0);ctx.scale(-1,1)}ctx.filter=filterCss;ctx.drawImage(video,0,0,w,h);ctx.restore();if(emoji){ctx.font=Math.floor(w*.18)+'px sans-serif';ctx.textAlign='center';ctx.fillText(emoji,w/2,h/2)}const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();status('Photo saved to your Downloads/Gallery.')});
+window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop())});
+</script>
+</body></html>
