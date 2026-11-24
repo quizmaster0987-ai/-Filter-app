@@ -3,93 +3,129 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#17151f">
-<title>Filter Studio</title>
+<meta name="theme-color" content="#100e18">
+<title>Filter Studio — Live Camera</title>
 <style>
-:root{color-scheme:dark;--bg:#111018;--panel:#201e2b;--pink:#ff8eb7;--text:#fff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#33243b 0,#111018 45%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
-header{padding:20px 18px 12px;text-align:center}h1{font-size:24px;margin:0;letter-spacing:.4px}header p{margin:5px 0 0;color:#c8bdce;font-size:13px}
-main{width:min(100%,560px);margin:auto;padding:10px 14px 28px}
-.camera{position:relative;overflow:hidden;border-radius:28px;background:#09080c;aspect-ratio:3/4;box-shadow:0 18px 50px #0008;border:1px solid #ffffff22}
-video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);transition:filter .2s}
-.camera.off video{display:none}.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:#d7cddd;padding:25px;gap:12px}.placeholder .cam{font-size:48px}
-.camera.live .placeholder{display:none}
-.overlay{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center;font-size:clamp(55px,17vw,105px);text-shadow:0 4px 18px #0008}
-.topline{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
-.pill{background:#08070bb8;border:1px solid #ffffff25;border-radius:99px;padding:7px 11px;font-size:12px;backdrop-filter:blur(12px)}
-.controls{display:flex;gap:10px;margin:14px 0;justify-content:center;flex-wrap:wrap}
-button{border:0;border-radius:15px;padding:12px 16px;background:#302c3d;color:white;font-weight:650;font-size:14px;cursor:pointer}
-button.primary{background:linear-gradient(135deg,#ff8eb7,#b68bff);color:#201323}
-button:disabled{opacity:.4;cursor:not-allowed}
-.section-title{font-size:14px;font-weight:700;margin:18px 2px 10px;color:#e8dfea}
-.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.filter{padding:10px 5px;background:var(--panel);border:1px solid #ffffff12;border-radius:16px;text-align:center;font-size:12px}
-.filter .sample{height:48px;border-radius:11px;margin-bottom:7px;background:linear-gradient(135deg,#e6b8a2,#8264a7 55%,#e9d5b2)}
-.filter[aria-pressed=true]{outline:2px solid var(--pink);background:#392a3e}
-.filter small{display:block;color:#cbbfd0;font-size:10px;margin-top:2px}
-.beauty-panel{background:linear-gradient(145deg,#302638,#211e2c);border:1px solid #ffffff18;border-radius:18px;padding:14px;margin-top:14px}.beauty-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:10px}.beauty-head output{color:#ffb5d0;font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:#ff8eb7;height:28px}.beauty-hint{font-size:11px;color:#c8bdce;margin-top:5px}.glow-layer{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 38%,#fff5 0%,#ffd5e522 32%,transparent 68%);mix-blend-mode:screen;opacity:0;transition:opacity .15s}.note{font-size:12px;color:#bdb2c4;line-height:1.5;margin:16px 3px}
-#status{min-height:20px;text-align:center;color:#ffd4e4;font-size:13px;margin:6px}
-@media(min-width:520px){main{padding-top:16px}.camera{aspect-ratio:4/5}.filters{grid-template-columns:repeat(6,1fr)}}
+:root{color-scheme:dark;--bg:#100e18;--panel:#211d2b;--pink:#ff91bc;--muted:#bdb2c8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#49314c 0,#171321 42%,#0e0c14 100%);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100dvh}
+header{text-align:center;padding:17px 14px 10px}h1{font-size:23px;margin:0;letter-spacing:.3px}header p{font-size:12px;color:#d0c4d5;margin:5px 0}
+main{width:min(100%,560px);margin:auto;padding:8px 13px 30px}
+.camera{position:relative;aspect-ratio:3/4;max-height:68dvh;margin:auto;overflow:hidden;border-radius:27px;background:#08070c;border:1px solid #ffffff22;box-shadow:0 18px 55px #0009}
+video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);transition:filter .18s}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)}
+.camera.off video,#camera.off #fx{visibility:hidden}
+.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:25px;gap:9px;color:#ded3e4}.camera.live .placeholder{display:none}
+.placeholder b{font-size:46px}.topline{position:absolute;z-index:2;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}
+.pill{background:#09070dbd;border:1px solid #ffffff2b;border-radius:99px;padding:7px 11px;font-size:11px;backdrop-filter:blur(12px)}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+button{border:1px solid #ffffff12;border-radius:14px;padding:11px 13px;background:#302a3b;color:#fff;font-weight:650;font-size:13px;cursor:pointer}
+button.primary{background:linear-gradient(135deg,#ff91bc,#b99aff);color:#241525;border:0}
+button:disabled{opacity:.4}.section{font-size:13px;font-weight:750;margin:17px 2px 9px;color:#f0e4f0}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.filter{padding:9px 4px;border-radius:14px;background:#211d2b;text-align:center;font-size:11px}
+.filter .sample{height:35px;border-radius:9px;margin-bottom:6px;background:linear-gradient(135deg,#f0bba8,#8263a4,#ead7b7)}
+.filter[aria-pressed=true],.lens[aria-pressed=true]{outline:2px solid var(--pink);background:#39293d}
+.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lens{padding:10px 3px;background:#211d2b;border-radius:14px;font-size:11px}.lens strong{display:block;font-size:24px;margin-bottom:3px}
+.panel{background:linear-gradient(145deg,#302638,#211e2c);border:1px solid #ffffff18;border-radius:17px;padding:12px;margin-top:12px}
+.panel-head{display:flex;justify-content:space-between;font-size:12px;font-weight:700}.panel output{color:#ffb5d0}
+input[type=range]{width:100%;accent-color:#ff91bc}
+.hint,.note{font-size:11px;color:var(--muted);line-height:1.5}.note{margin:14px 3px}
+#status{min-height:18px;text-align:center;color:#ffd4e4;font-size:12px;margin:7px}
+@media(min-width:520px){.camera{aspect-ratio:4/5;max-height:620px}.filters,.lenses{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
-<header><h1>✨ Filter Studio</h1><p>Live camera filters • Capture your moment</p></header>
+<header><h1>✦ Filter Studio</h1><p>Live camera · playful lenses · aesthetic looks</p></header>
 <main>
 <div class="camera off" id="camera">
- <video id="video" autoplay playsinline muted></video>
- <div class="placeholder"><div class="cam">📸</div><strong>Your camera preview will appear here</strong><span>Tap “Start camera” and allow camera access.</span></div>
- <div class="glow-layer" id="glowLayer"></div>\n <div class="overlay" id="overlay"></div>
- <div class="topline"><span class="pill" id="activeName">Natural</span><span class="pill">LIVE</span></div>
+ <video id="video" autoplay playsinline muted></video><canvas id="fx"></canvas>
+ <div class="placeholder"><b>📸</b><strong>Your live camera studio</strong><span>Tap Start camera and allow access.</span></div>
+ <div class="topline"><span class="pill" id="activeName">Natural</span><span class="pill" id="faceStatus">FACE LENSES READYING</span></div>
 </div>
 <div class="controls">
- <button class="primary" id="start">Start camera</button>
- <button id="flip" disabled>↔ Flip</button>
- <button id="capture" disabled>◎ Capture</button>
- <button id="stop" disabled>Stop</button>
+ <button class="primary" id="start">Start camera</button><button id="flip" disabled>↔ Flip</button><button id="capture" disabled>◎ Capture</button><button id="stop" disabled>Stop</button>
 </div>
-<div id="status" role="status"></div>
-<div class="section-title">Choose your filter</div>
+<div id="status" role="status">Camera starts after you tap the button.</div>
+<div class="section">Aesthetic filters</div>
 <div class="filters" id="filters">
- <button class="filter" data-name="Natural" data-css="none" aria-pressed="true"><div class="sample"></div>Natural<small>Original</small></button>
- <button class="filter" data-name="Glow" data-css="brightness(1.12) contrast(.94) saturate(1.18)"><div class="sample" style="filter:brightness(1.12) saturate(1.18)"></div>Glow<small>Soft light</small></button>
- <button class="filter" data-name="Warm" data-css="sepia(.28) saturate(1.25)"><div class="sample" style="filter:sepia(.28) saturate(1.25)"></div>Warm<small>Golden</small></button>
- <button class="filter" data-name="Vintage" data-css="sepia(.48) contrast(.9) saturate(.8)"><div class="sample" style="filter:sepia(.48) contrast(.9)"></div>Vintage<small>Retro</small></button>
- <button class="filter" data-name="Dreamy" data-css="brightness(1.12) saturate(.82) blur(.25px)"><div class="sample" style="filter:brightness(1.12) saturate(.82)"></div>Dreamy<small>Soft</small></button>
- <button class="filter" data-name="Cool" data-css="hue-rotate(12deg) saturate(1.12)"><div class="sample" style="filter:hue-rotate(12deg) saturate(1.12)"></div>Cool<small>Fresh</small></button>
- <button class="filter" data-name="B&W" data-css="grayscale(1)"><div class="sample" style="filter:grayscale(1)"></div>B&W<small>Classic</small></button>
- <button class="filter" data-name="Pink" data-css="hue-rotate(325deg) saturate(1.2) brightness(1.05)"><div class="sample" style="filter:hue-rotate(325deg) saturate(1.2)"></div>Pink<small>Rosy</small></button>
- <button class="filter" data-name="Sepia" data-css="sepia(1)"><div class="sample" style="filter:sepia(1)"></div>Sepia<small>Classic tone</small></button>
- <button class="filter" data-name="Vivid" data-css="saturate(1.8) contrast(1.08)"><div class="sample" style="filter:saturate(1.8)"></div>Vivid<small>Bright color</small></button>
- <button class="filter" data-name="Soft" data-css="brightness(1.08) contrast(.82) saturate(.9)"><div class="sample" style="filter:brightness(1.08) contrast(.82)"></div>Soft<small>Gentle</small></button>
- <button class="filter" data-name="Neon" data-css="saturate(1.7) hue-rotate(25deg) contrast(1.15)"><div class="sample" style="filter:saturate(1.7) hue-rotate(25deg)"></div>Neon<small>Bold</small></button>
+ <button class="filter" data-name="Natural" data-css="none" aria-pressed="true"><div class="sample"></div>Natural</button>
+ <button class="filter" data-name="Glow" data-css="brightness(1.12) contrast(.94) saturate(1.18)"><div class="sample" style="filter:brightness(1.12) saturate(1.18)"></div>Glow</button>
+ <button class="filter" data-name="Warm" data-css="sepia(.28) saturate(1.25)"><div class="sample" style="filter:sepia(.28) saturate(1.25)"></div>Warm</button>
+ <button class="filter" data-name="Vintage" data-css="sepia(.48) contrast(.9) saturate(.8)"><div class="sample" style="filter:sepia(.48)"></div>Vintage</button>
+ <button class="filter" data-name="Dreamy" data-css="brightness(1.12) saturate(.82)"><div class="sample" style="filter:brightness(1.12)"></div>Dreamy</button>
+ <button class="filter" data-name="Cool" data-css="hue-rotate(12deg) saturate(1.12)"><div class="sample" style="filter:hue-rotate(12deg)"></div>Cool</button>
+ <button class="filter" data-name="B&W" data-css="grayscale(1)"><div class="sample" style="filter:grayscale(1)"></div>B&W</button>
+ <button class="filter" data-name="Pink" data-css="hue-rotate(325deg) saturate(1.2) brightness(1.05)"><div class="sample" style="filter:hue-rotate(325deg)"></div>Pink</button>
+ <button class="filter" data-name="Sepia" data-css="sepia(1)"><div class="sample" style="filter:sepia(1)"></div>Sepia</button>
+ <button class="filter" data-name="Vivid" data-css="saturate(1.8) contrast(1.08)"><div class="sample" style="filter:saturate(1.8)"></div>Vivid</button>
+ <button class="filter" data-name="Soft" data-css="brightness(1.08) contrast(.82) saturate(.9)"><div class="sample" style="filter:brightness(1.08)"></div>Soft</button>
+ <button class="filter" data-name="Neon" data-css="saturate(1.7) hue-rotate(25deg) contrast(1.15)"><div class="sample" style="filter:saturate(1.7)"></div>Neon</button>
 </div>
-<div class="beauty-panel"><div class="beauty-head"><span>✨ Beauty glow</span><output id="beautyValue">55%</output></div><input id="beautyRange" type="range" min="0" max="100" value="55" aria-label="Beauty glow intensity"><div class="beauty-hint">Adjust soft light and warm color. This is a gentle visual effect, not face reshaping or skin retouching.</div></div>\n<div class="section-title">Fun overlays</div>
-<div class="controls" id="overlays">
- <button data-emoji="">None</button><button data-emoji="✨">✨ Sparkles</button><button data-emoji="💗">💗 Hearts</button><button data-emoji="🌸">🌸 Flowers</button><button data-emoji="😎">😎 Cool</button>
+<div class="panel"><div class="panel-head"><span>✨ Soft glow</span><output id="beautyValue">35%</output></div><input id="beauty" type="range" min="0" max="100" value="35"><div class="hint">Adjusts light and color only; no face reshaping.</div></div>
+<div class="section">Live face lenses</div>
+<div class="lenses" id="lenses">
+ <button class="lens" data-lens="none" aria-pressed="true"><strong>◯</strong>None</button>
+ <button class="lens" data-lens="puppy"><strong>🐶</strong>Puppy</button>
+ <button class="lens" data-lens="kitty"><strong>🐱</strong>Kitty</button>
+ <button class="lens" data-lens="crown"><strong>👑</strong>Crown</button>
+ <button class="lens" data-lens="glasses"><strong>🕶️</strong>Glasses</button>
+ <button class="lens" data-lens="hearts"><strong>💗</strong>Hearts</button>
+ <button class="lens" data-lens="flower"><strong>🌸</strong>Flower</button>
+ <button class="lens" data-lens="mustache"><strong>🥸</strong>Mustache</button>
 </div>
-<p class="note">Camera access works on HTTPS (GitHub Pages) and requires your permission. This first version has live color filters and decorative overlays; Snapchat-style face-tracking lenses need a separate face-tracking model.</p>
+<p class="note">Face lenses use on-device face landmark tracking after the model loads. Your camera preview is processed in this browser; photos are saved only when you tap Capture. Camera access requires HTTPS and permission.</p>
 </main>
-<script>
-const video=document.querySelector('#video'),camera=document.querySelector('#camera'),startBtn=document.querySelector('#start'),flipBtn=document.querySelector('#flip'),captureBtn=document.querySelector('#capture'),stopBtn=document.querySelector('#stop'),statusEl=document.querySelector('#status'),activeName=document.querySelector('#activeName'),overlay=document.querySelector('#overlay');
-let stream=null,facing='user',filterCss='none',filterName='Natural',emoji='',beautyLevel=55;
-function status(s){statusEl.textContent=s}
-async function startCamera(){
- if(!navigator.mediaDevices?.getUserMedia){status('Camera is unavailable. Open this app using its HTTPS GitHub Pages link.');return}
- try{if(stream)stream.getTracks().forEach(t=>t.stop());
- stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});
- video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');applyFilter();
- startBtn.disabled=true;flipBtn.disabled=false;captureBtn.disabled=false;stopBtn.disabled=false;status('Camera is ready. Choose a filter!')}
- catch(e){status(e.name==='NotAllowedError'?'Please allow camera permission in your browser.':'Could not start camera. Check camera permission and try again.')}
+<script type="module">
+import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+const video=document.querySelector('#video'),camera=document.querySelector('#camera'),fx=document.querySelector('#fx'),ctx=fx.getContext('2d');
+const startBtn=document.querySelector('#start'),flipBtn=document.querySelector('#flip'),captureBtn=document.querySelector('#capture'),stopBtn=document.querySelector('#stop'),statusEl=document.querySelector('#status');
+let stream=null,facing='user',filterCss='none',filterName='Natural',lens='none',beauty=35,landmarker=null,modelReady=false,raf=0,lastVideoTime=-1,lastResults=null;
+const say=s=>statusEl.textContent=s;
+function resizeCanvas(){if(video.videoWidth&&video.videoHeight){fx.width=video.videoWidth;fx.height=video.videoHeight}}
+async function loadModel(){
+ if(landmarker)return;
+ document.querySelector('#faceStatus').textContent='LOADING LENSES';
+ try{const files=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');landmarker=await FaceLandmarker.createFromOptions(files,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1});modelReady=true;document.querySelector('#faceStatus').textContent='FACE TRACKING ON';say('Face lenses ready. Choose a lens below.')}
+ catch(e){document.querySelector('#faceStatus').textContent='BASIC FILTERS';say('Camera works; face lens model could not load. Check internet and reload.')}
 }
-function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;camera.classList.add('off');camera.classList.remove('live');startBtn.disabled=false;flipBtn.disabled=true;captureBtn.disabled=true;stopBtn.disabled=true;status('Camera stopped.')}
-function applyFilter(){const b=beautyLevel/100;video.style.filter=filterCss+' brightness('+(1+b*.13)+') saturate('+(1+b*.16)+') contrast('+(1-b*.07)+')';document.querySelector('#beautyValue').textContent=beautyLevel+'%';document.querySelector('#glowLayer').style.opacity=String(b*.72);activeName.textContent=filterName==='Natural'?'Beauty':filterName;overlay.textContent=emoji}
-document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');filterCss=b.dataset.css;filterName=b.dataset.name;applyFilter()}));
-document.querySelectorAll('#overlays button').forEach(b=>b.addEventListener('click',()=>{emoji=b.dataset.emoji;applyFilter()}));
-document.querySelector('#beautyRange').addEventListener('input',e=>{beautyLevel=Number(e.target.value);applyFilter()});\nstartBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',stopCamera);
-flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';if(stream)startCamera()});
-captureBtn.addEventListener('click',()=>{if(!stream)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.save();if(facing==='user'){ctx.translate(w,0);ctx.scale(-1,1)}const b=beautyLevel/100;ctx.filter=filterCss+' brightness('+(1+b*.13)+') saturate('+(1+b*.16)+') contrast('+(1-b*.07)+')';ctx.drawImage(video,0,0,w,h);ctx.restore();if(beautyLevel>0){const g=ctx.createRadialGradient(w/2,h*.38,0,w/2,h*.38,h*.72);g.addColorStop(0,'rgba(255,245,250,'+(b*.12)+')');g.addColorStop(.45,'rgba(255,215,232,'+(b*.07)+')');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}if(emoji){ctx.font=Math.floor(w*.18)+'px sans-serif';ctx.textAlign='center';ctx.fillText(emoji,w/2,h/2)}const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();status('Photo saved to your Downloads/Gallery.')});
+function point(lm,i){return {x:lm[i].x*fx.width,y:lm[i].y*fx.height}}
+function emojiAt(text,x,y,size){ctx.font=size+'px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y)}
+function drawLens(lm){
+ const forehead=point(lm,10),nose=point(lm,1),left=point(lm,234),right=point(lm,454),eyeL=point(lm,33),eyeR=point(lm,263),mouth=point(lm,13);
+ const faceW=Math.hypot(right.x-left.x,right.y-left.y),eyeDist=Math.hypot(eyeR.x-eyeL.x,eyeR.y-eyeL.y),angle=Math.atan2(eyeR.y-eyeL.y,eyeR.x-eyeL.x),size=faceW*.28;
+ ctx.save();ctx.translate(forehead.x,forehead.y);ctx.rotate(angle);
+ if(lens==='puppy'){emojiAt('🐶',0,-faceW*.48,size*1.55);emojiAt('🐾',-faceW*.46,-faceW*.12,size*.55);emojiAt('🐾',faceW*.46,-faceW*.12,size*.55);emojiAt('🐽',nose.x-forehead.x,nose.y-forehead.y,size*.48)}
+ if(lens==='kitty'){emojiAt('🐱',0,-faceW*.43,size*1.55);emojiAt('💗',nose.x-forehead.x,nose.y-forehead.y,size*.34)}
+ if(lens==='crown'){emojiAt('👑',0,-faceW*.54,size*1.65)}
+ if(lens==='hearts'){emojiAt('💗',-faceW*.42,-faceW*.28,size*.72);emojiAt('💗',faceW*.42,-faceW*.28,size*.72);emojiAt('✨',0,-faceW*.64,size*.48)}
+ if(lens==='flower'){emojiAt('🌸',-faceW*.45,-faceW*.34,size*.95);emojiAt('🌸',faceW*.45,-faceW*.34,size*.95);emojiAt('🌼',0,-faceW*.58,size*.8)}
+ ctx.restore();
+ if(lens==='glasses'){ctx.save();ctx.translate((eyeL.x+eyeR.x)/2,(eyeL.y+eyeR.y)/2);ctx.rotate(angle);ctx.font=(eyeDist*.95)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🕶️',0,0);ctx.restore()}
+ if(lens==='mustache'){ctx.save();ctx.translate(nose.x,mouth.y+faceW*.035);ctx.font=(faceW*.38)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🥸',0,0);ctx.restore()}
+}
+function drawFrame(){
+ if(!stream||video.readyState<2){raf=requestAnimationFrame(drawFrame);return}
+ if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resizeCanvas();
+ ctx.clearRect(0,0,fx.width,fx.height);
+ if(modelReady&&landmarker&&video.currentTime!==lastVideoTime){lastVideoTime=video.currentTime;lastResults=landmarker.detectForVideo(video,performance.now())}
+ const faces=lastResults?.faceLandmarks||[];
+ if(faces.length&&lens!=='none')drawLens(faces[0]);
+ raf=requestAnimationFrame(drawFrame);
+}
+function setFilter(){const b=beauty/100;video.style.filter=filterCss+' brightness('+(1+b*.12)+') saturate('+(1+b*.12)+') contrast('+(1-b*.05)+')';document.querySelector('#beautyValue').textContent=beauty+'%';document.querySelector('#activeName').textContent=filterName}
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){say('Open this app using its HTTPS GitHub Pages address.');return}
+ try{if(stream)stream.getTracks().forEach(t=>t.stop());cancelAnimationFrame(raf);stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();resizeCanvas();camera.classList.remove('off');camera.classList.add('live');startBtn.disabled=true;flipBtn.disabled=false;captureBtn.disabled=false;stopBtn.disabled=false;setFilter();say('Camera is live. Loading face lenses…');loadModel();drawFrame()}
+ catch(e){say(e.name==='NotAllowedError'?'Allow camera permission in your browser settings.':'Could not start camera. Check permission and try again.')}
+}
+function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);ctx.clearRect(0,0,fx.width,fx.height);video.srcObject=null;camera.classList.add('off');camera.classList.remove('live');startBtn.disabled=false;flipBtn.disabled=true;captureBtn.disabled=true;stopBtn.disabled=true;say('Camera stopped.')}
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');filterCss=b.dataset.css;filterName=b.dataset.name;setFilter()}));
+document.querySelectorAll('.lens').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.lens').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');lens=b.dataset.lens;if(lens!=='none'&&!modelReady)say('Face tracking is loading. Keep the camera open and try again shortly.')}))
+document.querySelector('#beauty').addEventListener('input',e=>{beauty=Number(e.target.value);setFilter()});
+startBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',stopCamera);
+flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';startCamera()});
+captureBtn.addEventListener('click',()=>{if(!stream)return;const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=video.style.filter||'none';g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();say('Photo saved. Check your Downloads or Gallery.')});
 window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop())});
-// Open the camera as soon as the app loads; the browser will ask for permission if needed.
-window.addEventListener('load',()=>startCamera());
 </script>
 </body></html>
