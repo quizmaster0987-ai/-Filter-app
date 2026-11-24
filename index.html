@@ -127,5 +127,7 @@ startBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',
 flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';startCamera()});
 captureBtn.addEventListener('click',()=>{if(!stream)return;const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=video.style.filter||'none';g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();say('Photo saved. Check your Downloads or Gallery.')});
 window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop())});
+// Ask for camera access as soon as the app opens; the Start button remains as a fallback.
+startCamera();
 </script>
 </body></html>
