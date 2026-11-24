@@ -22,50 +22,41 @@ async function loadFaceModel(){if(landmarker||modelReady)return;try{const {FaceL
 function p(lm,i){return{x:lm[i].x*fx.width,y:lm[i].y*fx.height}}
 function emoji(t,x,y,size){ctx.font=size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y)}
 function drawLens(lm){
- const leftFace=p(lm,234),rightFace=p(lm,454),nose=p(lm,1),mouth=p(lm,13),fore=p(lm,10);
- const w=Math.hypot(rightFace.x-leftFace.x,rightFace.y-leftFace.y),rot=Math.atan2(rightFace.y-leftFace.y,rightFace.x-leftFace.x);
- const eyeLO=p(lm,33),eyeLI=p(lm,133),eyeRI=p(lm,362),eyeRO=p(lm,263);
- const centerL={x:(eyeLO.x+eyeLI.x)/2,y:(eyeLO.y+eyeLI.y)/2},centerR={x:(eyeRI.x+eyeRO.x)/2,y:(eyeRI.y+eyeRO.y)/2};
- const eyeW1=Math.hypot(eyeLI.x-eyeLO.x,eyeLI.y-eyeLO.y),eyeW2=Math.hypot(eyeRO.x-eyeRI.x,eyeRO.y-eyeRI.y);
+ const pt=i=>p(lm,i),cheekL=pt(234),cheekR=pt(454),fore=pt(10),nose=pt(1),mouth=pt(13);
+ const faceW=Math.hypot(cheekR.x-cheekL.x,cheekR.y-cheekL.y),roll=Math.atan2(cheekR.y-cheekL.y,cheekR.x-cheekL.x);
+ const lo=pt(33),li=pt(133),ri=pt(362),ro=pt(263);
+ const cL={x:(lo.x+li.x)/2,y:(lo.y+li.y)/2},cR={x:(ri.x+ro.x)/2,y:(ri.y+ro.y)/2};
+ const eyeSpan=Math.hypot(cR.x-cL.x,cR.y-cL.y),eyeW1=Math.hypot(li.x-lo.x,li.y-lo.y),eyeW2=Math.hypot(ro.x-ri.x,ro.y-ri.y);
  if(lens==='glasses'){
-  const cx=(centerL.x+centerR.x)/2,cy=(centerL.y+centerR.y)/2;
-  const frameW=Math.max(eyeW1,eyeW2)*1.42,frameH=frameW*.62;
-  ctx.save();ctx.translate(cx,cy);ctx.rotate(rot);
-  ctx.lineWidth=Math.max(3,w*.014);ctx.strokeStyle='#17131f';ctx.fillStyle='rgba(28,24,42,.30)';
-  for(const x of [centerL.x-cx,centerR.x-cx]){
-   ctx.beginPath();ctx.roundRect(x-frameW/2,-frameH/2,frameW,frameH,frameH*.25);ctx.fill();ctx.stroke();
-  }
-  ctx.beginPath();ctx.moveTo(centerL.x-cx+frameW/2,0);ctx.quadraticCurveTo(0,-frameH*.13,centerR.x-cx-frameW/2,0);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(centerL.x-cx-frameW/2, -frameH*.18);ctx.lineTo(centerL.x-cx-frameW*.72,-frameH*.03);
-  ctx.moveTo(centerR.x-cx+frameW/2,-frameH*.18);ctx.lineTo(centerR.x-cx+frameW*.72,-frameH*.03);ctx.stroke();
-  ctx.restore();
+  const fw1=eyeW1*1.55,fw2=eyeW2*1.55,fh1=fw1*.62,fh2=fw2*.62,xL=-eyeSpan/2,xR=eyeSpan/2;
+  ctx.save();ctx.translate((cL.x+cR.x)/2,(cL.y+cR.y)/2);ctx.rotate(roll);
+  ctx.lineWidth=Math.max(3,faceW*.014);ctx.strokeStyle='#17131f';ctx.fillStyle='rgba(25,22,36,.28)';
+  ctx.beginPath();ctx.roundRect(xL-fw1/2,-fh1/2,fw1,fh1,fh1*.28);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.roundRect(xR-fw2/2,-fh2/2,fw2,fh2,fh2*.28);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(xL+fw1/2,0);ctx.quadraticCurveTo(0,-faceW*.015,xR-fw2/2,0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(xL-fw1/2,0);ctx.lineTo(xL-fw1*.72,fh1*.04);ctx.moveTo(xR+fw2/2,0);ctx.lineTo(xR+fw2*.72,fh2*.04);ctx.stroke();ctx.restore();
  }
  if(lens==='crown'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(rot);
-  const cw=w*.72,ch=w*.38,y=-w*.43;
-  ctx.fillStyle='#f5bd35';ctx.strokeStyle='#8c5315';ctx.lineWidth=Math.max(2,w*.012);
-  ctx.beginPath();ctx.moveTo(-cw/2,y+ch);ctx.lineTo(-cw*.48,y+ch*.15);ctx.lineTo(-cw*.22,y+ch*.48);ctx.lineTo(0,y);ctx.lineTo(cw*.22,y+ch*.48);ctx.lineTo(cw*.48,y+ch*.15);ctx.lineTo(cw/2,y+ch);ctx.closePath();ctx.fill();ctx.stroke();
-  ctx.fillStyle='#e94f86';ctx.beginPath();ctx.roundRect(-cw/2,y+ch*.78,cw,ch*.25,ch*.08);ctx.fill();ctx.stroke();
-  for(const x of [-cw*.22,0,cw*.22]){ctx.fillStyle='#fff1a8';ctx.beginPath();ctx.arc(x,y+ch*.63,w*.025,0,Math.PI*2);ctx.fill()}
-  ctx.restore();
+  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);
+  const cw=faceW*.78,ch=faceW*.25,y=-faceW*.25;
+  ctx.lineWidth=Math.max(2,faceW*.012);ctx.fillStyle='#f6c342';ctx.strokeStyle='#8b5419';
+  ctx.beginPath();ctx.moveTo(-cw/2,y+ch);ctx.lineTo(-cw*.48,y+ch*.22);ctx.lineTo(-cw*.25,y+ch*.56);ctx.lineTo(0,y);ctx.lineTo(cw*.25,y+ch*.56);ctx.lineTo(cw*.48,y+ch*.22);ctx.lineTo(cw/2,y+ch);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle='#e84e89';ctx.beginPath();ctx.roundRect(-cw/2,y+ch*.78,cw,ch*.23,ch*.08);ctx.fill();ctx.stroke();
+  for(const [x,col] of [[-cw*.25,'#70d8ef'],[0,'#fff0a5'],[cw*.25,'#7be0a2']]){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y+ch*.72,faceW*.025,0,Math.PI*2);ctx.fill()}ctx.restore();
  }
  if(lens==='puppy'||lens==='kitty'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(rot);
-  const earY=w*.05,earX=w*.38;
-  ctx.font=(w*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-  if(lens==='puppy'){ctx.fillText('🐶',0,-w*.48);ctx.fillText('🐾',-earX,earY);ctx.fillText('🐾',earX,earY);ctx.fillText('🐽',nose.x-fore.x,nose.y-fore.y)}
-  else{ctx.fillText('🐱',0,-w*.48);ctx.fillText('💗',nose.x-fore.x,nose.y-fore.y)}
-  ctx.restore();
+  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);ctx.font=(faceW*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  if(lens==='puppy'){ctx.fillText('🐶',0,-faceW*.43);ctx.fillText('🐾',-faceW*.43,faceW*.04);ctx.fillText('🐾',faceW*.43,faceW*.04);ctx.fillText('🐽',nose.x-fore.x,nose.y-fore.y)}
+  else{ctx.fillText('🐱',0,-faceW*.43);ctx.fillText('💗',nose.x-fore.x,nose.y-fore.y)}ctx.restore();
  }
  if(lens==='hearts'||lens==='flower'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(rot);ctx.font=(w*.22)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-  if(lens==='hearts'){ctx.fillText('💗',-w*.48,-w*.24);ctx.fillText('💗',w*.48,-w*.24);ctx.fillText('✨',0,-w*.58)}
-  else{ctx.fillText('🌸',-w*.48,-w*.25);ctx.fillText('🌸',w*.48,-w*.25);ctx.fillText('🌼',0,-w*.55)}
-  ctx.restore();
+  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);ctx.font=(faceW*.22)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  if(lens==='hearts'){ctx.fillText('💗',-faceW*.48,-faceW*.24);ctx.fillText('💗',faceW*.48,-faceW*.24);ctx.fillText('✨',0,-faceW*.58)}
+  else{ctx.fillText('🌸',-faceW*.48,-faceW*.25);ctx.fillText('🌸',faceW*.48,-faceW*.25);ctx.fillText('🌼',0,-faceW*.55)}ctx.restore();
  }
- if(lens==='mustache'){ctx.save();ctx.translate(mouth.x,mouth.y+w*.03);ctx.font=(w*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🥸',0,0);ctx.restore()}
+ if(lens==='mustache'){ctx.save();ctx.translate(mouth.x,mouth.y+faceW*.03);ctx.font=(faceW*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🥸',0,0);ctx.restore()}
 }
-function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth)resize();ctx.clearRect(0,0,fx.width,fx.height);if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length&&lens!=='none')drawLens(faces[0])}raf=requestAnimationFrame(frame)}
+function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resize();ctx.clearRect(0,0,fx.width,fx.height);if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length&&lens!=='none')drawLens(faces[0])}raf=requestAnimationFrame(frame)}
 async function start(){try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Open in Chrome and allow camera permission');if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');camera.classList.toggle('mirror',facing==='user');resize();say('Camera is on');loadFaceModel();cancelAnimationFrame(raf);frame()}catch(e){say(e.name==='NotAllowedError'?'Camera permission blocked — allow Camera for this website':e.message||'Could not start camera')}}
 function stop(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);camera.classList.add('off');camera.classList.remove('live')}
 function composedCanvas(){const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');g.save();if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=filterCss;g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);g.restore();return c}
