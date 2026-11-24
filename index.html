@@ -1,141 +1,50 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#100e18">
-<title>Filter Studio — Live Camera</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08080d"><title>Snap Studio — Camera</title>
 <style>
-:root{color-scheme:dark;--bg:#100e18;--panel:#211d2b;--pink:#ff91bc;--muted:#bdb2c8}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#49314c 0,#171321 42%,#0e0c14 100%);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100dvh}
-header{text-align:center;padding:17px 14px 10px}h1{font-size:23px;margin:0;letter-spacing:.3px}header p{font-size:12px;color:#d0c4d5;margin:5px 0}
-main{width:min(100%,560px);margin:auto;padding:8px 13px 30px}
-.camera{position:relative;aspect-ratio:3/4;max-height:68dvh;margin:auto;overflow:hidden;border-radius:27px;background:#08070c;border:1px solid #ffffff22;box-shadow:0 18px 55px #0009}
-video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);transition:filter .18s}
-#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)}
-.camera.off video,#camera.off #fx{visibility:hidden}
-.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:25px;gap:9px;color:#ded3e4}.camera.live .placeholder{display:none}
-.placeholder b{font-size:46px}.topline{position:absolute;z-index:2;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}
-.pill{background:#09070dbd;border:1px solid #ffffff2b;border-radius:99px;padding:7px 11px;font-size:11px;backdrop-filter:blur(12px)}
-.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
-button{border:1px solid #ffffff12;border-radius:14px;padding:11px 13px;background:#302a3b;color:#fff;font-weight:650;font-size:13px;cursor:pointer}
-button.primary{background:linear-gradient(135deg,#ff91bc,#b99aff);color:#241525;border:0}
-button:disabled{opacity:.4}.section{font-size:13px;font-weight:750;margin:17px 2px 9px;color:#f0e4f0}
-.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.filter{padding:9px 4px;border-radius:14px;background:#211d2b;text-align:center;font-size:11px}
-.filter .sample{height:35px;border-radius:9px;margin-bottom:6px;background:linear-gradient(135deg,#f0bba8,#8263a4,#ead7b7)}
-.filter[aria-pressed=true],.lens[aria-pressed=true]{outline:2px solid var(--pink);background:#39293d}
-.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.lens{padding:10px 3px;background:#211d2b;border-radius:14px;font-size:11px}.lens strong{display:block;font-size:24px;margin-bottom:3px}
-.panel{background:linear-gradient(145deg,#302638,#211e2c);border:1px solid #ffffff18;border-radius:17px;padding:12px;margin-top:12px}
-.panel-head{display:flex;justify-content:space-between;font-size:12px;font-weight:700}.panel output{color:#ffb5d0}
-input[type=range]{width:100%;accent-color:#ff91bc}
-.hint,.note{font-size:11px;color:var(--muted);line-height:1.5}.note{margin:14px 3px}
-#status{min-height:18px;text-align:center;color:#ffd4e4;font-size:12px;margin:7px}
-@media(min-width:520px){.camera{aspect-ratio:4/5;max-height:620px}.filters,.lenses{grid-template-columns:repeat(6,1fr)}}
-</style>
-</head>
-<body>
-<header><h1>✦ Filter Studio</h1><p>Live camera · playful lenses · aesthetic looks</p></header>
-<main>
-<div class="camera off" id="camera">
- <video id="video" autoplay playsinline muted></video><canvas id="fx"></canvas>
- <div class="placeholder"><b>📸</b><strong>Your live camera studio</strong><span>Tap Start camera and allow access.</span></div>
- <div class="topline"><span class="pill" id="activeName">Natural</span><span class="pill" id="faceStatus">FACE LENSES READYING</span></div>
+:root{color-scheme:dark;--pink:#ff9fc8;--panel:#17151e;--muted:#c9c2d0}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08080d;color:white;font-family:system-ui,-apple-system,Segoe UI,sans-serif}button{font:inherit;color:inherit;border:0;cursor:pointer}.app{height:100dvh;max-width:600px;margin:auto;position:relative;background:#08080d;overflow:hidden}.camera{position:absolute;inset:0 0 190px;background:#111;overflow:hidden}.camera video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)}.camera.off video,.camera.off #fx{display:none}.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:10px;color:#fff;padding:25px}.placeholder b{font-size:56px}.camera.live .placeholder{display:none}.top{position:absolute;z-index:4;top:env(safe-area-inset-top,10px);left:0;right:0;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.top button{pointer-events:auto;width:42px;height:42px;border-radius:50%;background:#08080d88;backdrop-filter:blur(10px);font-size:20px}.brand{font-weight:850;letter-spacing:.5px;text-shadow:0 1px 8px #000}.status{position:absolute;z-index:3;top:68px;left:50%;transform:translateX(-50%);background:#08080d99;border-radius:20px;padding:6px 11px;font-size:11px;white-space:nowrap;color:#ffe1ef}.bottom{position:absolute;z-index:5;left:0;right:0;bottom:0;padding:9px 12px calc(env(safe-area-inset-bottom,8px) + 8px);background:linear-gradient(transparent,#08080d 16%);}.lensrow{display:flex;gap:12px;overflow-x:auto;padding:8px 2px 12px;scrollbar-width:none}.lensrow::-webkit-scrollbar{display:none}.lens{flex:0 0 66px;background:transparent;text-align:center;font-size:10px;color:#eee;opacity:.83}.lens .orb{width:57px;height:57px;border-radius:50%;margin:0 auto 5px;background:linear-gradient(145deg,#40374a,#17151e);border:2px solid #ffffff30;display:grid;place-items:center;font-size:28px}.lens[aria-pressed=true] .orb{border:3px solid white;box-shadow:0 0 0 3px #ff8fbd}.lens[aria-pressed=true]{opacity:1}.actions{display:flex;align-items:center;justify-content:space-around;gap:10px;padding:3px 0 7px}.sidebtn{width:48px;height:48px;border-radius:50%;background:#ffffff20;font-size:22px;display:grid;place-items:center}.shutter{width:72px;height:72px;border-radius:50%;background:white;border:5px solid #ffffff80;box-shadow:0 0 0 3px #fff}.shutter.recording{background:#ff4168;border-radius:22px;transform:scale(.78)}.actionlabel{font-size:10px;text-align:center;color:#ddd;margin-top:4px}.nav{height:48px;display:flex;justify-content:space-around;align-items:center;border-top:1px solid #ffffff18}.nav button{background:transparent;font-size:11px;color:#ddd;display:grid;gap:2px;justify-items:center}.nav b{font-size:19px}.filters{position:absolute;z-index:4;left:12px;right:12px;top:115px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.filters button{white-space:nowrap;background:#09090db0;border:1px solid #ffffff35;border-radius:20px;padding:7px 12px;font-size:11px}.filters button[aria-pressed=true]{background:#fff;color:#111}.sheet{position:absolute;z-index:10;inset:0;background:#111018;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top,10px) + 12px) 16px 20px}.sheet.open{display:flex}.sheethead{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:18px;padding-bottom:16px}.sheethead button{background:#292431;border-radius:50%;width:38px;height:38px}.memorygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow:auto}.memorygrid img,.memorygrid video{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:#292431}.empty{color:#c9c2d0;text-align:center;margin:auto}.hint{font-size:10px;color:#c9c2d0;text-align:center;min-height:16px}.hidden{display:none!important}#galleryInput{display:none}@media(min-width:600px){.camera{bottom:190px}.app{border-left:1px solid #25222b;border-right:1px solid #25222b}}
+</style></head><body><div class="app">
+<div class="camera off" id="camera"><video id="video" autoplay playsinline muted></video><canvas id="fx"></canvas><div class="placeholder"><b>📸</b><strong>Tap to open your camera</strong><span>Choose a lens and create a Snap</span></div></div>
+<div class="top"><button id="flash" aria-label="Flash">⚡</button><div class="brand">✦ SNAP STUDIO</div><button id="flip" aria-label="Flip camera">↻</button></div><div class="status" id="status">Tap the shutter to start camera</div>
+<div class="filters" id="filters"><button data-css="none" aria-pressed="true">Natural</button><button data-css="brightness(1.12) saturate(1.2)">Glow</button><button data-css="sepia(.28) saturate(1.25)">Warm</button><button data-css="sepia(.45) contrast(.9)">Vintage</button><button data-css="brightness(1.1) saturate(.8)">Dreamy</button><button data-css="grayscale(1)">B&W</button><button data-css="hue-rotate(325deg) saturate(1.2)">Pink</button><button data-css="saturate(1.7)">Vivid</button><button data-css="sepia(1)">Sepia</button></div>
+<div class="bottom"><div class="lensrow" id="lenses">
+<button class="lens" data-lens="none" aria-pressed="true"><div class="orb">◯</div>Original</button><button class="lens" data-lens="puppy"><div class="orb">🐶</div>Puppy</button><button class="lens" data-lens="kitty"><div class="orb">🐱</div>Kitty</button><button class="lens" data-lens="crown"><div class="orb">👑</div>Crown</button><button class="lens" data-lens="glasses"><div class="orb">🕶️</div>Glasses</button><button class="lens" data-lens="hearts"><div class="orb">💗</div>Hearts</button><button class="lens" data-lens="flower"><div class="orb">🌸</div>Flower</button><button class="lens" data-lens="mustache"><div class="orb">🥸</div>Mustache</button>
+</div><div class="actions"><div><button class="sidebtn" id="gallery">▧</button><div class="actionlabel">Memories</div></div><div><button class="shutter" id="shutter" aria-label="Take photo"></button><div class="actionlabel" id="shutterLabel">PHOTO</div></div><div><button class="sidebtn" id="mode">◉</button><div class="actionlabel" id="modeLabel">VIDEO</div></div></div><div class="hint" id="hint">Tap shutter for photo · tap VIDEO to record</div><div class="nav"><button id="navMemories"><b>▧</b>Memories</button><button id="navCamera"><b>◎</b>Camera</button><button id="navProfile"><b>☻</b>Profile</button></div></div>
+<input type="file" accept="image/*,video/*" id="galleryInput">
+<div class="sheet" id="memorySheet"><div class="sheethead"><span>Memories</span><button data-close="memorySheet">✕</button></div><div class="memorygrid" id="memoryGrid"></div><div class="empty" id="memoryEmpty">Your saved Snaps will appear here.</div></div>
+<div class="sheet" id="profileSheet"><div class="sheethead"><span>Profile</span><button data-close="profileSheet">✕</button></div><div class="empty">✦ SNAP STUDIO<br><br>Camera & creative lenses<br><br>Photos and videos stay on this device.<br><br><small>Local camera studio — no account or chat service.</small></div></div>
 </div>
-<div class="controls">
- <button class="primary" id="start">Start camera</button><button id="flip" disabled>↔ Flip</button><button id="capture" disabled>◎ Capture</button><button id="stop" disabled>Stop</button>
-</div>
-<div id="status" role="status">Camera starts after you tap the button.</div>
-<div class="section">Aesthetic filters</div>
-<div class="filters" id="filters">
- <button class="filter" data-name="Natural" data-css="none" aria-pressed="true"><div class="sample"></div>Natural</button>
- <button class="filter" data-name="Glow" data-css="brightness(1.12) contrast(.94) saturate(1.18)"><div class="sample" style="filter:brightness(1.12) saturate(1.18)"></div>Glow</button>
- <button class="filter" data-name="Warm" data-css="sepia(.28) saturate(1.25)"><div class="sample" style="filter:sepia(.28) saturate(1.25)"></div>Warm</button>
- <button class="filter" data-name="Vintage" data-css="sepia(.48) contrast(.9) saturate(.8)"><div class="sample" style="filter:sepia(.48)"></div>Vintage</button>
- <button class="filter" data-name="Dreamy" data-css="brightness(1.12) saturate(.82)"><div class="sample" style="filter:brightness(1.12)"></div>Dreamy</button>
- <button class="filter" data-name="Cool" data-css="hue-rotate(12deg) saturate(1.12)"><div class="sample" style="filter:hue-rotate(12deg)"></div>Cool</button>
- <button class="filter" data-name="B&W" data-css="grayscale(1)"><div class="sample" style="filter:grayscale(1)"></div>B&W</button>
- <button class="filter" data-name="Pink" data-css="hue-rotate(325deg) saturate(1.2) brightness(1.05)"><div class="sample" style="filter:hue-rotate(325deg)"></div>Pink</button>
- <button class="filter" data-name="Sepia" data-css="sepia(1)"><div class="sample" style="filter:sepia(1)"></div>Sepia</button>
- <button class="filter" data-name="Vivid" data-css="saturate(1.8) contrast(1.08)"><div class="sample" style="filter:saturate(1.8)"></div>Vivid</button>
- <button class="filter" data-name="Soft" data-css="brightness(1.08) contrast(.82) saturate(.9)"><div class="sample" style="filter:brightness(1.08)"></div>Soft</button>
- <button class="filter" data-name="Neon" data-css="saturate(1.7) hue-rotate(25deg) contrast(1.15)"><div class="sample" style="filter:saturate(1.7)"></div>Neon</button>
-</div>
-<div class="panel"><div class="panel-head"><span>✨ Soft glow</span><output id="beautyValue">35%</output></div><input id="beauty" type="range" min="0" max="100" value="35"><div class="hint">Adjusts light and color only; no face reshaping.</div></div>
-<div class="section">Live face lenses</div>
-<div class="lenses" id="lenses">
- <button class="lens" data-lens="none" aria-pressed="true"><strong>◯</strong>None</button>
- <button class="lens" data-lens="puppy"><strong>🐶</strong>Puppy</button>
- <button class="lens" data-lens="kitty"><strong>🐱</strong>Kitty</button>
- <button class="lens" data-lens="crown"><strong>👑</strong>Crown</button>
- <button class="lens" data-lens="glasses"><strong>🕶️</strong>Glasses</button>
- <button class="lens" data-lens="hearts"><strong>💗</strong>Hearts</button>
- <button class="lens" data-lens="flower"><strong>🌸</strong>Flower</button>
- <button class="lens" data-lens="mustache"><strong>🥸</strong>Mustache</button>
-</div>
-<p class="note">Face lenses use on-device face landmark tracking after the model loads. Your camera preview is processed in this browser; photos are saved only when you tap Capture. Camera access requires HTTPS and permission.</p>
-</main>
 <script type="module">
-const video=document.querySelector('#video'),camera=document.querySelector('#camera'),fx=document.querySelector('#fx'),ctx=fx.getContext('2d');
-const startBtn=document.querySelector('#start'),flipBtn=document.querySelector('#flip'),captureBtn=document.querySelector('#capture'),stopBtn=document.querySelector('#stop'),statusEl=document.querySelector('#status');
-let stream=null,facing='user',filterCss='none',filterName='Natural',lens='none',beauty=35,landmarker=null,modelReady=false,raf=0,lastVideoTime=-1,lastResults=null;
-const say=s=>statusEl.textContent=s;
-function resizeCanvas(){if(video.videoWidth&&video.videoHeight){fx.width=video.videoWidth;fx.height=video.videoHeight}}
-async function loadModel(){
- if(landmarker)return;
- document.querySelector('#faceStatus').textContent='LOADING LENSES';
- try{const {FaceLandmarker,FilesetResolver}=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');const files=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');landmarker=await FaceLandmarker.createFromOptions(files,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1});modelReady=true;document.querySelector('#faceStatus').textContent='FACE TRACKING ON';say('Face lenses ready. Choose a lens below.')}
- catch(e){document.querySelector('#faceStatus').textContent='BASIC FILTERS';say('Camera works; face lens model could not load. Check internet and reload.')}
+const $=s=>document.querySelector(s),video=$('#video'),camera=$('#camera'),fx=$('#fx'),ctx=fx.getContext('2d'),status=$('#status'),hint=$('#hint');
+let stream=null,facing='user',filterCss='none',lens='none',landmarker=null,modelReady=false,raf=0,lastTime=-1,results=null,recording=null,recorder=null,chunks=[],videoMode=false,flashOn=false;
+const say=t=>status.textContent=t;
+function resize(){if(video.videoWidth){fx.width=video.videoWidth;fx.height=video.videoHeight}}
+async function loadFaceModel(){if(landmarker||modelReady)return;try{const {FaceLandmarker,FilesetResolver}=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');const fs=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');landmarker=await FaceLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'},runningMode:'VIDEO',numFaces:1});modelReady=true;say('Face lenses ready')}catch(e){say('Basic filters ready · face lens model needs internet')}}
+function p(lm,i){return{x:(1-lm[i].x)*fx.width,y:lm[i].y*fx.height}}
+function emoji(t,x,y,size){ctx.font=size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y)}
+function drawLens(lm){const l=p(lm,234),r=p(lm,454),eye1=p(lm,33),eye2=p(lm,263),nose=p(lm,1),mouth=p(lm,13),fore=p(lm,10);const w=Math.hypot(r.x-l.x,r.y-l.y),ang=Math.atan2(r.y-l.y,r.x-l.x),sz=w*.24;
+ctx.save();ctx.translate(fx.width-fore.x,fore.y);ctx.rotate(-ang);
+if(lens==='puppy'){emoji('🐶',0,-w*.57,sz*2.2);emoji('🐾',-w*.54,-w*.05,sz*.75);emoji('🐾',w*.54,-w*.05,sz*.75);emoji('🐽',nose.x-fore.x,nose.y-fore.y,sz*.7)}
+if(lens==='kitty'){emoji('🐱',0,-w*.53,sz*2.25);emoji('💗',nose.x-fore.x,nose.y-fore.y,sz*.55)}
+if(lens==='crown'){emoji('👑',0,-w*.7,sz*2.25)}
+if(lens==='hearts'){emoji('💗',-w*.48,-w*.3,sz*1.1);emoji('💗',w*.48,-w*.3,sz*1.1);emoji('✨',0,-w*.72,sz*.8)}
+if(lens==='flower'){emoji('🌸',-w*.52,-w*.36,sz*1.25);emoji('🌸',w*.52,-w*.36,sz*1.25);emoji('🌼',0,-w*.69,sz*1.05)}
+ctx.restore();
+if(lens==='glasses'){const a=p(lm,133),b=p(lm,362),mid1={x:(eye1.x+a.x)/2,y:(eye1.y+a.y)/2},mid2={x:(eye2.x+b.x)/2,y:(eye2.y+b.y)/2},span=Math.hypot(mid2.x-mid1.x,mid2.y-mid1.y),rot=Math.atan2(mid2.y-mid1.y,mid2.x-mid1.x),ww=span*.98,hh=ww*.55;ctx.save();ctx.translate((mid1.x+mid2.x)/2,(mid1.y+mid2.y)/2);ctx.rotate(rot);ctx.lineWidth=Math.max(3,w*.018);ctx.strokeStyle='#17131f';ctx.fillStyle='rgba(35,24,55,.25)';for(const x of [-span/2,span/2]){ctx.beginPath();ctx.roundRect(x-ww*.48,-hh/2,ww*.46,hh,hh*.25);ctx.fill();ctx.stroke()}ctx.beginPath();ctx.moveTo(-ww*.04,0);ctx.lineTo(ww*.04,0);ctx.stroke();ctx.restore()}
+if(lens==='mustache'){ctx.save();ctx.translate(fx.width-mouth.x,mouth.y+w*.03);emoji('🥸',0,0,w*.4);ctx.restore()}
 }
-function point(lm,i){return {x:lm[i].x*fx.width,y:lm[i].y*fx.height}}
-function emojiAt(text,x,y,size){ctx.font=size+'px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y)}
-function drawLens(lm){
- const forehead=point(lm,10),nose=point(lm,1),left=point(lm,234),right=point(lm,454),eyeL=point(lm,33),eyeR=point(lm,263),mouth=point(lm,13);
- const faceW=Math.hypot(right.x-left.x,right.y-left.y),eyeDist=Math.hypot(eyeR.x-eyeL.x,eyeR.y-eyeL.y),angle=Math.atan2(eyeR.y-eyeL.y,eyeR.x-eyeL.x),size=faceW*.28;
- ctx.save();ctx.translate(forehead.x,forehead.y);ctx.rotate(angle);
- if(lens==='puppy'){emojiAt('🐶',0,-faceW*.58,size*2.05);emojiAt('🐾',-faceW*.55,-faceW*.12,size*.72);emojiAt('🐾',faceW*.55,-faceW*.12,size*.72);emojiAt('🐽',nose.x-forehead.x,nose.y-forehead.y,size*.62)}
- if(lens==='kitty'){emojiAt('🐱',0,-faceW*.55,size*2.05);emojiAt('💗',nose.x-forehead.x,nose.y-forehead.y,size*.48)}
- if(lens==='crown'){emojiAt('👑',0,-faceW*.67,size*2.15)}
- if(lens==='hearts'){emojiAt('💗',-faceW*.48,-faceW*.32,size*1.05);emojiAt('💗',faceW*.48,-faceW*.32,size*1.05);emojiAt('✨',0,-faceW*.72,size*.72)}
- if(lens==='flower'){emojiAt('🌸',-faceW*.52,-faceW*.38,size*1.25);emojiAt('🌸',faceW*.52,-faceW*.38,size*1.25);emojiAt('🌼',0,-faceW*.70,size*1.05)}
- ctx.restore();
- if(lens==='glasses'){
-   const lOuter=point(lm,33),lInner=point(lm,133),rInner=point(lm,362),rOuter=point(lm,263);
-   const lc={x:(lOuter.x+lInner.x)/2,y:(lOuter.y+lInner.y)/2},rc={x:(rOuter.x+rInner.x)/2,y:(rOuter.y+rInner.y)/2};
-   const eyeSpan=Math.hypot(rc.x-lc.x,rc.y-lc.y),tilt=Math.atan2(rc.y-lc.y,rc.x-lc.x),w=eyeSpan*.48,h=w*.62,rad=h*.28;
-   ctx.save();ctx.translate((lc.x+rc.x)/2,(lc.y+rc.y)/2);ctx.rotate(tilt);
-   ctx.lineWidth=Math.max(3,faceW*.018);ctx.strokeStyle='#17131f';ctx.fillStyle='rgba(35,24,55,.32)';
-   for(const x of [-eyeSpan/2,eyeSpan/2]){ctx.beginPath();ctx.roundRect(x-w/2,-h/2,w,h,rad);ctx.fill();ctx.stroke()}
-   ctx.beginPath();ctx.moveTo(-w*.04,0);ctx.lineTo(w*.04,0);ctx.stroke();
-   ctx.beginPath();ctx.moveTo(-eyeSpan/2-w*.5,-h*.16);ctx.lineTo(-eyeSpan/2-w*.82,-h*.02);ctx.moveTo(eyeSpan/2+w*.5,-h*.16);ctx.lineTo(eyeSpan/2+w*.82,-h*.02);ctx.stroke();
-   ctx.restore()
-  }
- if(lens==='mustache'){ctx.save();ctx.translate(nose.x,mouth.y+faceW*.035);ctx.font=(faceW*.38)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🥸',0,0);ctx.restore()}
-}
-function drawFrame(){
- if(!stream||video.readyState<2){raf=requestAnimationFrame(drawFrame);return}
- if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resizeCanvas();
- ctx.clearRect(0,0,fx.width,fx.height);
- if(modelReady&&landmarker&&video.currentTime!==lastVideoTime){lastVideoTime=video.currentTime;lastResults=landmarker.detectForVideo(video,performance.now())}
- const faces=lastResults?.faceLandmarks||[];
- if(faces.length&&lens!=='none')drawLens(faces[0]);
- raf=requestAnimationFrame(drawFrame);
-}
-function setFilter(){const b=beauty/100;video.style.filter=filterCss+' brightness('+(1+b*.12)+') saturate('+(1+b*.12)+') contrast('+(1-b*.05)+')';document.querySelector('#beautyValue').textContent=beauty+'%';document.querySelector('#activeName').textContent=filterName}
-async function startCamera(){
- if(!navigator.mediaDevices?.getUserMedia){say('Open this app using its HTTPS GitHub Pages address.');return}
- try{if(stream)stream.getTracks().forEach(t=>t.stop());cancelAnimationFrame(raf);stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();resizeCanvas();camera.classList.remove('off');camera.classList.add('live');startBtn.disabled=true;flipBtn.disabled=false;captureBtn.disabled=false;stopBtn.disabled=false;setFilter();say('Camera is live. Loading face lenses…');loadModel();drawFrame()}
- catch(e){console.error('Camera start failed:',e);say(e.name==='NotAllowedError'?'Camera permission is blocked. Allow it in Chrome site settings.':e.name==='NotFoundError'?'No camera was found on this device.':e.name==='NotReadableError'?'Camera is busy in another app. Close it and retry.':'Camera error: '+(e.message||e.name))}
-}
-function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);ctx.clearRect(0,0,fx.width,fx.height);video.srcObject=null;camera.classList.add('off');camera.classList.remove('live');startBtn.disabled=false;flipBtn.disabled=true;captureBtn.disabled=true;stopBtn.disabled=true;say('Camera stopped.')}
-document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');filterCss=b.dataset.css;filterName=b.dataset.name;setFilter()}));
-document.querySelectorAll('.lens').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.lens').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');lens=b.dataset.lens;if(lens!=='none'&&!modelReady)say('Face tracking is loading. Keep the camera open and try again shortly.')}))
-document.querySelector('#beauty').addEventListener('input',e=>{beauty=Number(e.target.value);setFilter()});
-startBtn.addEventListener('click',startCamera);stopBtn.addEventListener('click',stopCamera);
-flipBtn.addEventListener('click',()=>{facing=facing==='user'?'environment':'user';startCamera()});
-captureBtn.addEventListener('click',()=>{if(!stream)return;const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=video.style.filter||'none';g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);const a=document.createElement('a');a.download='filter-studio-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click();say('Photo saved. Check your Downloads or Gallery.')});
-window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop())});
-
-</script>
-</body></html>
+function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth)resize();ctx.clearRect(0,0,fx.width,fx.height);if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length&&lens!=='none')drawLens(faces[0])}raf=requestAnimationFrame(frame)}
+async function start(){try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Open in Chrome and allow camera permission');if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');resize();say('Camera is on');loadFaceModel();cancelAnimationFrame(raf);frame()}catch(e){say(e.name==='NotAllowedError'?'Camera permission blocked — allow Camera for this website':e.message||'Could not start camera')}}
+function stop(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);camera.classList.add('off');camera.classList.remove('live')}
+function composedCanvas(){const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=filterCss;g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);return c}
+function saveMemory(blob,type){const reader=new FileReader();reader.onload=()=>{const arr=JSON.parse(localStorage.getItem('snaps')||'[]');arr.unshift({src:reader.result,type,at:Date.now()});try{localStorage.setItem('snaps',JSON.stringify(arr.slice(0,30)))}catch(e){say('Saved to device download; memory storage is full')}renderMemories()};reader.readAsDataURL(blob)}
+function photo(){if(!stream){start();return}composedCanvas().toBlob(b=>{if(!b)return;saveMemory(b,'image');const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download='snap-studio-'+Date.now()+'.jpg';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);say('Photo captured and saved')},'image/jpeg',.94)}
+function toggleVideo(){if(!stream){start();return}if(!recorder||recorder.state==='inactive'){const canvas=composedCanvas();const live=canvas.captureStream(24);recorder=new MediaRecorder(live);chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});saveMemory(blob,'video');const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='snap-studio-'+Date.now()+'.webm';a.click();setTimeout(()=>URL.revokeObjectURL(u),4000);say('Video saved')};recorder.start();$('#shutter').classList.add('recording');say('Recording video… tap VIDEO again to stop')}else{recorder.stop();$('#shutter').classList.remove('recording')}}
+function renderMemories(){const arr=JSON.parse(localStorage.getItem('snaps')||'[]'),grid=$('#memoryGrid');grid.innerHTML='';$('#memoryEmpty').classList.toggle('hidden',arr.length>0);arr.forEach(item=>{const el=item.type==='video'?document.createElement('video'):document.createElement('img');el.src=item.src;if(item.type==='video')el.controls=true;grid.append(el)})}
+document.querySelectorAll('.lens').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.lens').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');lens=b.dataset.lens;if(lens!=='none'&&!modelReady)loadFaceModel()}));
+document.querySelectorAll('#filters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#filters button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');filterCss=b.dataset.css;video.style.filter=filterCss}));
+$('#shutter').addEventListener('click',photo);$('#flip').addEventListener('click',()=>{facing=facing==='user'?'environment':'user';start()});$('#mode').addEventListener('click',()=>{videoMode=!videoMode;$('#modeLabel').textContent=videoMode?'PHOTO':'VIDEO';$('#shutterLabel').textContent=videoMode?'VIDEO':'PHOTO';hint.textContent=videoMode?'Tap shutter to start/stop video':'Tap shutter for photo';$('#shutter').onclick=videoMode?toggleVideo:photo});
+$('#flash').addEventListener('click',async()=>{if(!stream){say('Start camera first');return}const track=stream.getVideoTracks()[0];try{flashOn=!flashOn;await track.applyConstraints({advanced:[{torch:flashOn}]});$('#flash').textContent=flashOn?'⚡ On':'⚡';say(flashOn?'Flash on':'Flash off')}catch(e){flashOn=false;say('Flash is not supported by this camera') }});
+$('#gallery').addEventListener('click',()=>$('#galleryInput').click());$('#galleryInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);const w=window.open(u,'_blank');if(!w)say('Selected file ready in new tab');e.target.value=''});
+function openSheet(id){$( '#'+id).classList.add('open');if(id==='memorySheet')renderMemories()}document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).classList.remove('open')));$('#navMemories').addEventListener('click',()=>openSheet('memorySheet'));$('#navCamera').addEventListener('click',()=>$('#memorySheet').classList.remove('open'));$('#navProfile').addEventListener('click',()=>openSheet('profileSheet'));
+window.addEventListener('pagehide',stop);$('#shutter').onclick=photo;
+</script></body></html>
