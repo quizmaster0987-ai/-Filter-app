@@ -94,11 +94,11 @@ function drawLens(lm){
  const forehead=point(lm,10),nose=point(lm,1),left=point(lm,234),right=point(lm,454),eyeL=point(lm,33),eyeR=point(lm,263),mouth=point(lm,13);
  const faceW=Math.hypot(right.x-left.x,right.y-left.y),eyeDist=Math.hypot(eyeR.x-eyeL.x,eyeR.y-eyeL.y),angle=Math.atan2(eyeR.y-eyeL.y,eyeR.x-eyeL.x),size=faceW*.28;
  ctx.save();ctx.translate(forehead.x,forehead.y);ctx.rotate(angle);
- if(lens==='puppy'){emojiAt('🐶',0,-faceW*.48,size*1.55);emojiAt('🐾',-faceW*.46,-faceW*.12,size*.55);emojiAt('🐾',faceW*.46,-faceW*.12,size*.55);emojiAt('🐽',nose.x-forehead.x,nose.y-forehead.y,size*.48)}
- if(lens==='kitty'){emojiAt('🐱',0,-faceW*.43,size*1.55);emojiAt('💗',nose.x-forehead.x,nose.y-forehead.y,size*.34)}
- if(lens==='crown'){emojiAt('👑',0,-faceW*.54,size*1.65)}
- if(lens==='hearts'){emojiAt('💗',-faceW*.42,-faceW*.28,size*.72);emojiAt('💗',faceW*.42,-faceW*.28,size*.72);emojiAt('✨',0,-faceW*.64,size*.48)}
- if(lens==='flower'){emojiAt('🌸',-faceW*.45,-faceW*.34,size*.95);emojiAt('🌸',faceW*.45,-faceW*.34,size*.95);emojiAt('🌼',0,-faceW*.58,size*.8)}
+ if(lens==='puppy'){emojiAt('🐶',0,-faceW*.58,size*2.05);emojiAt('🐾',-faceW*.55,-faceW*.12,size*.72);emojiAt('🐾',faceW*.55,-faceW*.12,size*.72);emojiAt('🐽',nose.x-forehead.x,nose.y-forehead.y,size*.62)}
+ if(lens==='kitty'){emojiAt('🐱',0,-faceW*.55,size*2.05);emojiAt('💗',nose.x-forehead.x,nose.y-forehead.y,size*.48)}
+ if(lens==='crown'){emojiAt('👑',0,-faceW*.67,size*2.15)}
+ if(lens==='hearts'){emojiAt('💗',-faceW*.48,-faceW*.32,size*1.05);emojiAt('💗',faceW*.48,-faceW*.32,size*1.05);emojiAt('✨',0,-faceW*.72,size*.72)}
+ if(lens==='flower'){emojiAt('🌸',-faceW*.52,-faceW*.38,size*1.25);emojiAt('🌸',faceW*.52,-faceW*.38,size*1.25);emojiAt('🌼',0,-faceW*.70,size*1.05)}
  ctx.restore();
  if(lens==='glasses'){
    const lOuter=point(lm,33),lInner=point(lm,133),rInner=point(lm,362),rOuter=point(lm,263);
