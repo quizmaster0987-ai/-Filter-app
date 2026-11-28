@@ -30,13 +30,11 @@ function faceSoftening(lm){
  const eyeA=p(lm,33),eyeB=p(lm,133),eyeC=p(lm,362),eyeD=p(lm,263),mouthA=p(lm,61),mouthB=p(lm,291),mouthC=p(lm,13),mouthD=p(lm,14);
  const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
  const eye1=mid(eyeA,eyeB),eye2=mid(eyeC,eyeD),mouth=mid(mouthA,mouthB);
- ctx.save();ctx.clip(path,'nonzero');
  const cut=new Path2D();
  cut.ellipse(eye1.x,eye1.y,Math.hypot(eyeA.x-eyeB.x,eyeA.y-eyeB.y)*.72,Math.max(5,Math.hypot(eyeA.x-eyeB.x,eyeA.y-eyeB.y)*.48),0,0,Math.PI*2);
  cut.ellipse(eye2.x,eye2.y,Math.hypot(eyeC.x-eyeD.x,eyeC.y-eyeD.y)*.72,Math.max(5,Math.hypot(eyeC.x-eyeD.x,eyeC.y-eyeD.y)*.48),0,0,Math.PI*2);
  cut.ellipse(mouth.x,mouth.y,Math.max(8,Math.abs(mouthB.x-mouthA.x)*.62),Math.max(5,Math.abs(mouthD.y-mouthC.y)*2),0,0,Math.PI*2);
- ctx.globalCompositeOperation='destination-out';ctx.fill(cut);ctx.globalCompositeOperation='source-over';
- ctx.globalAlpha=.22;ctx.drawImage(softCanvas,0,0);ctx.restore();
+ path.addPath(cut);ctx.save();ctx.clip(path,'evenodd');ctx.globalAlpha=.20;ctx.drawImage(softCanvas,0,0);ctx.restore();
 }
 function drawLens(lm){
  const pt=i=>p(lm,i),L=pt(234),R=pt(454),top=pt(10),nose=pt(1),mouth=pt(13);
