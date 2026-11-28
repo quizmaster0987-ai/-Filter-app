@@ -45,11 +45,11 @@ export function createFaceAR(canvas) {
   }
   function makeSunglasses(style='classic') {
     const g = new THREE.Group();
-    const w = style==='catEye' ? 0.245 : 0.225;
-    const h = style==='catEye' ? 0.155 : 0.17;
+    const w = style==='catEye' ? 0.285 : 0.275;
+    const h = style==='catEye' ? 0.19 : 0.205;
     const lensMat = style==='rose' ? lensRose : lensSmoke;
     for (const side of [-1,1]) {
-      const x = side*0.145;
+      const x = side*0.17;
       const lensShape = roundedLensShape(w,h,style==='catEye'?0.045:0.055);
       if (style==='catEye') {
         lensShape.moveTo(x-w/2+0.025,-h/2);
@@ -66,7 +66,7 @@ export function createFaceAR(canvas) {
           new THREE.Vector3(x-w/2+0.04,h/2,0.025),
           new THREE.Vector3(x-w/2,h/2-0.045,0.025),
           new THREE.Vector3(x-w/2+0.04,-h/2,0.025)
-        ],true),0.012,32,8,false),style==='gold'?frameGold:frameBlack);
+        ],true),0.016,32,8,false),style==='gold'?frameGold:frameBlack);
       g.add(border);
       // Lens reflection gives the glass a curved, polished look.
       const glint = new THREE.Mesh(new THREE.PlaneGeometry(w*0.42,0.012),shine);
