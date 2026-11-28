@@ -69,6 +69,32 @@ function faceSoftening(lm){
  cut.ellipse(mouth.x,mouth.y,Math.max(8,Math.abs(mouthB.x-mouthA.x)*.62),Math.max(5,Math.abs(mouthD.y-mouthC.y)*2),0,0,Math.PI*2);
  path.addPath(cut);ctx.save();ctx.clip(path,'evenodd');ctx.globalAlpha=.20;ctx.drawImage(softCanvas,0,0);ctx.restore();
 }
+
+function drawGlassesFallback(lm,style){
+ const pt=i=>p(lm,i),a=pt(33),b=pt(133),c=pt(362),d=pt(263);
+ const left={x:(a.x+b.x)/2,y:(a.y+b.y)/2},right={x:(c.x+d.x)/2,y:(c.y+d.y)/2};
+ const span=Math.hypot(right.x-left.x,right.y-left.y),roll=Math.atan2(right.y-left.y,right.x-left.x);
+ const faceW=Math.hypot(pt(454).x-pt(234).x,pt(454).y-pt(234).y);
+ const gold=style==='goldGlasses',rose=style==='roseGlasses',cat=style==='catEye';
+ const frame=gold?'#d9ad55':rose?'#d88ab1':cat?'#211923':'#171923';
+ const glass=gold?'rgba(70,89,112,.42)':rose?'rgba(171,83,130,.38)':'rgba(55,72,96,.46)';
+ const w=Math.max(26,span*.52),h=Math.max(18,w*(cat?.54:.62)),gap=span*.07;
+ ctx.save();ctx.translate((left.x+right.x)/2,(left.y+right.y)/2);ctx.rotate(roll);
+ ctx.lineJoin='round';ctx.lineWidth=Math.max(3,faceW*.018);ctx.strokeStyle=frame;ctx.fillStyle=glass;
+ for(const side of [-1,1]){
+  const x=side*(span/2+gap/2),ww=w;
+  ctx.beginPath();
+  if(cat){ctx.moveTo(x-ww*.52,h*.34);ctx.lineTo(x-ww*.44,-h*.34);ctx.lineTo(x+ww*.35,-h*.42);ctx.lineTo(x+ww*.57,-h*.78);ctx.lineTo(x+ww*.55,h*.28);ctx.quadraticCurveTo(x,h*.66,x-ww*.52,h*.34)}
+  else{ctx.roundRect(x-ww/2,-h/2,ww,h,h*.24)}
+  ctx.fill();ctx.stroke();
+  ctx.save();ctx.beginPath();ctx.rect(x-ww/2,-h/2,ww,h);ctx.clip();
+  const shine=ctx.createLinearGradient(x-ww/2,-h/2,x+ww/2,h/2);shine.addColorStop(0,'rgba(255,255,255,.30)');shine.addColorStop(.45,'rgba(255,255,255,.02)');shine.addColorStop(1,'rgba(255,255,255,.12)');ctx.fillStyle=shine;ctx.fillRect(x-ww/2,-h/2,ww,h);ctx.restore();
+ }
+ ctx.beginPath();ctx.moveTo(-gap/2,-h*.05);ctx.quadraticCurveTo(0,-h*.27,gap/2,-h*.05);ctx.stroke();
+ ctx.lineWidth=Math.max(2,faceW*.012);ctx.beginPath();ctx.moveTo(-span*.54,0);ctx.lineTo(-span*.68,-h*.1);ctx.moveTo(span*.54,0);ctx.lineTo(span*.68,-h*.1);ctx.stroke();
+ ctx.restore();
+}
+
 function drawLens(lm){
  const pt=i=>p(lm,i),L=pt(234),R=pt(454),top=pt(10),nose=pt(1),mouth=pt(13);
  const faceW=Math.hypot(R.x-L.x,R.y-L.y),angle=Math.atan2(R.y-L.y,R.x-L.x);
@@ -121,7 +147,7 @@ function drawLens(lm){
  if(lens==='butterfly'){ctx.save();ctx.translate(top.x,top.y-faceW*.40);ctx.rotate(angle);for(const side of [-1,1]){ctx.fillStyle=side<0?'#a88cff':'#ff8fc5';ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(side*faceW*.10,-faceW*.28,side*faceW*.38,-faceW*.30,side*faceW*.36,-faceW*.08);ctx.bezierCurveTo(side*faceW*.30,faceW*.08,side*faceW*.12,faceW*.07,0,0);ctx.fill();ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(side*faceW*.10,faceW*.08,side*faceW*.29,faceW*.22,side*faceW*.23,faceW*.34);ctx.bezierCurveTo(side*faceW*.05,faceW*.36,side*faceW*.02,faceW*.12,0,0);ctx.fill()}ctx.strokeStyle='#ffe7a8';ctx.lineWidth=faceW*.018;ctx.beginPath();ctx.moveTo(0,-faceW*.04);ctx.lineTo(0,faceW*.24);ctx.stroke();ctx.restore()}
  if(lens==='halo'){ctx.save();ctx.translate(top.x,top.y);ctx.rotate(angle);ctx.strokeStyle='#ffe5a1';ctx.lineWidth=faceW*.035;ctx.shadowColor='#ffd36e';ctx.shadowBlur=faceW*.09;ctx.beginPath();ctx.ellipse(0,-faceW*.52,faceW*.36,faceW*.105,0,0,Math.PI*2);ctx.stroke();ctx.restore()}
  if(lens==='makeup'){ctx.save();for(const id of [50,280]){const q=pt(id);const grad=ctx.createRadialGradient(q.x,q.y,2,q.x,q.y,faceW*.13);grad.addColorStop(0,'rgba(255,92,145,.30)');grad.addColorStop(1,'rgba(255,92,145,0)');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(q.x,q.y,faceW*.13,0,Math.PI*2);ctx.fill()}const lipL=pt(61),lipR=pt(291),lip=pt(13);ctx.fillStyle='rgba(220,65,112,.28)';ctx.beginPath();ctx.ellipse(lip.x,lip.y,Math.abs(lipR.x-lipL.x)*.48,faceW*.035,angle,0,Math.PI*2);ctx.fill();ctx.restore()}
-}function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resize();ctx.clearRect(0,0,fx.width,fx.height);ctx.save();ctx.globalAlpha=filterStrength;if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length){if(lens==='beauty')faceSoftening(faces[0]);if(['glasses','goldGlasses','roseGlasses','catEye','crown'].includes(lens)){ar3d?.update(faces[0],fx.width,fx.height,lens)}else{ar3d?.clear();if(lens!=='none')drawLens(faces[0])}}else{ar3d?.clear()}ctx.restore()}raf=requestAnimationFrame(frame)}
+}function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resize();ctx.clearRect(0,0,fx.width,fx.height);ctx.save();ctx.globalAlpha=filterStrength;if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length){if(lens==='beauty')faceSoftening(faces[0]);if(['glasses','goldGlasses','roseGlasses','catEye','crown'].includes(lens)){if(ar3d){ar3d.update(faces[0],fx.width,fx.height,lens)}else if(lens==='crown'){drawLens(faces[0])}else{drawGlassesFallback(faces[0],lens)}}else{ar3d?.clear();if(lens!=='none')drawLens(faces[0])}}else{ar3d?.clear()}ctx.restore()}raf=requestAnimationFrame(frame)}
 async function start(){try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Open in Chrome and allow camera permission');if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');camera.classList.toggle('mirror',facing==='user');resize();say('Camera is on');loadFaceModel();cancelAnimationFrame(raf);frame()}catch(e){say(e.name==='NotAllowedError'?'Camera permission blocked — allow Camera for this website':e.message||'Could not start camera')}}
 function stop(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);camera.classList.add('off');camera.classList.remove('live')}
 function composedCanvas(){const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');g.save();if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=filterCss;g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.globalAlpha=filterStrength;g.drawImage(fx,0,0,c.width,c.height);g.drawImage(arCanvas,0,0,c.width,c.height);g.restore();return c}
