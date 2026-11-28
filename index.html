@@ -14,7 +14,9 @@
 <div class="sheet" id="profileSheet"><div class="sheethead"><span>Profile</span><button data-close="profileSheet">✕</button></div><div class="empty">✦ SNAP STUDIO<br><br>Camera & creative lenses<br><br>Photos and videos stay on this device.<br><br><small>Local camera studio — no account or chat service.</small></div></div>
 </div>
 <script type="module">
-import { createFaceAR } from './face-ar.js';\nconst $=s=>document.querySelector(s),video=$('#video'),camera=$('#camera'),fx=$('#fx'),ctx=fx.getContext('2d'),arCanvas=$('#ar3d'),status=$('#status'),hint=$('#hint');\nlet ar3d=null;try{ar3d=createFaceAR(arCanvas)}catch(e){console.warn('3D renderer unavailable',e)}
+import { createFaceAR } from './face-ar.js';
+const $=s=>document.querySelector(s),video=$('#video'),camera=$('#camera'),fx=$('#fx'),ctx=fx.getContext('2d'),arCanvas=$('#ar3d'),status=$('#status'),hint=$('#hint');
+let ar3d=null;try{ar3d=createFaceAR(arCanvas)}catch(e){console.warn('3D renderer unavailable',e)}
 let stream=null,facing='user',filterCss='none',lens='none',landmarker=null,modelReady=false,raf=0,lastTime=-1,results=null,recording=null,recorder=null,chunks=[],videoMode=false,flashOn=false,filterStrength=1,memDb=null,memoryUrls=[];
 const say=t=>status.textContent=t;
 function resize(){if(video.videoWidth){fx.width=video.videoWidth;fx.height=video.videoHeight}}
