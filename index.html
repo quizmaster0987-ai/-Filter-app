@@ -7,7 +7,7 @@
 <div class="top"><button id="flash" aria-label="Flash">⚡</button><div class="brand">✦ SNAP STUDIO</div><button id="flip" aria-label="Flip camera">↻</button></div><div class="status" id="status">Tap the shutter to start camera</div>
 <div class="filters" id="filters"><button data-css="none" aria-pressed="true">Natural</button><button data-css="brightness(1.12) saturate(1.2)">Glow</button><button data-css="sepia(.28) saturate(1.25)">Warm</button><button data-css="sepia(.45) contrast(.9)">Vintage</button><button data-css="brightness(1.1) saturate(.8)">Dreamy</button><button data-css="grayscale(1)">B&W</button><button data-css="hue-rotate(325deg) saturate(1.2)">Pink</button><button data-css="saturate(1.7)">Vivid</button><button data-css="sepia(1)">Sepia</button></div>
 <div class="bottom"><div class="lensrow" id="lenses">
-<button class="lens" data-lens="none" aria-pressed="true"><div class="orb">◯</div>Original</button><button class="lens" data-lens="puppy"><div class="orb">🐶</div>Puppy</button><button class="lens" data-lens="kitty"><div class="orb">🐱</div>Kitty</button><button class="lens" data-lens="crown"><div class="orb">👑</div>Crown</button><button class="lens" data-lens="glasses"><div class="orb">🕶️</div>Glasses</button><button class="lens" data-lens="hearts"><div class="orb">💗</div>Hearts</button><button class="lens" data-lens="flower"><div class="orb">🌸</div>Flower</button><button class="lens" data-lens="mustache"><div class="orb">🥸</div>Mustache</button>
+<button class="lens" data-lens="none" aria-pressed="true"><div class="orb">◯</div>Original</button><button class="lens" data-lens="puppy"><div class="orb">🐶</div>Puppy</button><button class="lens" data-lens="kitty"><div class="orb">🐱</div>Kitty</button><button class="lens" data-lens="crown"><div class="orb">👑</div>Crown</button><button class="lens" data-lens="glasses"><div class="orb">🕶️</div>Glasses</button><button class="lens" data-lens="hearts"><div class="orb">💗</div>Hearts</button><button class="lens" data-lens="flower"><div class="orb">🌸</div>Flower</button><button class="lens" data-lens="mustache"><div class="orb">🥸</div>Mustache</button><button class="lens" data-lens="beauty"><div class="orb">✦</div>Beauty</button><button class="lens" data-lens="blush"><div class="orb">♡</div>Blush</button><button class="lens" data-lens="freckles"><div class="orb">✧</div>Freckles</button><button class="lens" data-lens="sparkle"><div class="orb">✳</div>Sparkle</button>
 </div><div class="actions"><div><button class="sidebtn" id="gallery">▧</button><div class="actionlabel">Memories</div></div><div><button class="shutter" id="shutter" aria-label="Take photo"></button><div class="actionlabel" id="shutterLabel">PHOTO</div></div><div><button class="sidebtn" id="mode">◉</button><div class="actionlabel" id="modeLabel">VIDEO</div></div></div><div class="hint" id="hint">Tap shutter for photo · tap VIDEO to record</div><div class="nav"><button id="navMemories"><b>▧</b>Memories</button><button id="navCamera"><b>◎</b>Camera</button><button id="navProfile"><b>☻</b>Profile</button></div></div>
 <input type="file" accept="image/*,video/*" id="galleryInput">
 <div class="sheet" id="memorySheet"><div class="sheethead"><span>Memories</span><button data-close="memorySheet">✕</button></div><div class="memorygrid" id="memoryGrid"></div><div class="empty" id="memoryEmpty">Your saved Snaps will appear here.</div></div>
@@ -20,43 +20,74 @@ const say=t=>status.textContent=t;
 function resize(){if(video.videoWidth){fx.width=video.videoWidth;fx.height=video.videoHeight}}
 async function loadFaceModel(){if(landmarker||modelReady)return;try{const {FaceLandmarker,FilesetResolver}=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');const fs=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');landmarker=await FaceLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'},runningMode:'VIDEO',numFaces:1});modelReady=true;say('Face lenses ready')}catch(e){say('Basic filters ready · face lens model needs internet')}}
 function p(lm,i){return{x:lm[i].x*fx.width,y:lm[i].y*fx.height}}
-function emoji(t,x,y,size){ctx.font=size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y)}
+const softCanvas=document.createElement('canvas'),softCtx=softCanvas.getContext('2d');
+function faceSoftening(lm){
+ const ids=[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+ softCanvas.width=fx.width;softCanvas.height=fx.height;
+ softCtx.clearRect(0,0,softCanvas.width,softCanvas.height);
+ softCtx.filter='blur(2.2px)';softCtx.drawImage(video,0,0,softCanvas.width,softCanvas.height);softCtx.filter='none';
+ const path=new Path2D();ids.forEach((id,i)=>{const q=p(lm,id);if(!i)path.moveTo(q.x,q.y);else path.lineTo(q.x,q.y)});path.closePath();
+ const eyeA=p(lm,33),eyeB=p(lm,133),eyeC=p(lm,362),eyeD=p(lm,263),mouthA=p(lm,61),mouthB=p(lm,291),mouthC=p(lm,13),mouthD=p(lm,14);
+ const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+ const eye1=mid(eyeA,eyeB),eye2=mid(eyeC,eyeD),mouth=mid(mouthA,mouthB);
+ ctx.save();ctx.clip(path,'nonzero');
+ const cut=new Path2D();
+ cut.ellipse(eye1.x,eye1.y,Math.hypot(eyeA.x-eyeB.x,eyeA.y-eyeB.y)*.72,Math.max(5,Math.hypot(eyeA.x-eyeB.x,eyeA.y-eyeB.y)*.48),0,0,Math.PI*2);
+ cut.ellipse(eye2.x,eye2.y,Math.hypot(eyeC.x-eyeD.x,eyeC.y-eyeD.y)*.72,Math.max(5,Math.hypot(eyeC.x-eyeD.x,eyeC.y-eyeD.y)*.48),0,0,Math.PI*2);
+ cut.ellipse(mouth.x,mouth.y,Math.max(8,Math.abs(mouthB.x-mouthA.x)*.62),Math.max(5,Math.abs(mouthD.y-mouthC.y)*2),0,0,Math.PI*2);
+ ctx.globalCompositeOperation='destination-out';ctx.fill(cut);ctx.globalCompositeOperation='source-over';
+ ctx.globalAlpha=.22;ctx.drawImage(softCanvas,0,0);ctx.restore();
+}
 function drawLens(lm){
- const pt=i=>p(lm,i),cheekL=pt(234),cheekR=pt(454),fore=pt(10),nose=pt(1),mouth=pt(13);
- const faceW=Math.hypot(cheekR.x-cheekL.x,cheekR.y-cheekL.y),roll=Math.atan2(cheekR.y-cheekL.y,cheekR.x-cheekL.x);
- const lo=pt(33),li=pt(133),ri=pt(362),ro=pt(263);
- const cL={x:(lo.x+li.x)/2,y:(lo.y+li.y)/2},cR={x:(ri.x+ro.x)/2,y:(ri.y+ro.y)/2};
- const eyeSpan=Math.hypot(cR.x-cL.x,cR.y-cL.y),eyeW1=Math.hypot(li.x-lo.x,li.y-lo.y),eyeW2=Math.hypot(ro.x-ri.x,ro.y-ri.y);
+ const pt=i=>p(lm,i),L=pt(234),R=pt(454),top=pt(10),nose=pt(1),mouth=pt(13);
+ const faceW=Math.hypot(R.x-L.x,R.y-L.y),angle=Math.atan2(R.y-L.y,R.x-L.x);
+ const eyeOL=pt(33),eyeIL=pt(133),eyeIR=pt(362),eyeOR=pt(263);
+ const eyeL={x:(eyeOL.x+eyeIL.x)/2,y:(eyeOL.y+eyeIL.y)/2},eyeR={x:(eyeIR.x+eyeOR.x)/2,y:(eyeIR.y+eyeOR.y)/2};
+ const ewL=Math.hypot(eyeIL.x-eyeOL.x,eyeIL.y-eyeOL.y),ewR=Math.hypot(eyeOR.x-eyeIR.x,eyeOR.y-eyeIR.y);
+ const eyeSpan=Math.hypot(eyeR.x-eyeL.x,eyeR.y-eyeL.y);
  if(lens==='glasses'){
-  const fw1=eyeW1*1.55,fw2=eyeW2*1.55,fh1=fw1*.62,fh2=fw2*.62,xL=-eyeSpan/2,xR=eyeSpan/2;
-  ctx.save();ctx.translate((cL.x+cR.x)/2,(cL.y+cR.y)/2);ctx.rotate(roll);
-  ctx.lineWidth=Math.max(3,faceW*.014);ctx.strokeStyle='#17131f';ctx.fillStyle='rgba(25,22,36,.28)';
-  ctx.beginPath();ctx.roundRect(xL-fw1/2,-fh1/2,fw1,fh1,fh1*.28);ctx.fill();ctx.stroke();
-  ctx.beginPath();ctx.roundRect(xR-fw2/2,-fh2/2,fw2,fh2,fh2*.28);ctx.fill();ctx.stroke();
-  ctx.beginPath();ctx.moveTo(xL+fw1/2,0);ctx.quadraticCurveTo(0,-faceW*.015,xR-fw2/2,0);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(xL-fw1/2,0);ctx.lineTo(xL-fw1*.72,fh1*.04);ctx.moveTo(xR+fw2/2,0);ctx.lineTo(xR+fw2*.72,fh2*.04);ctx.stroke();ctx.restore();
+  ctx.save();ctx.translate((eyeL.x+eyeR.x)/2,(eyeL.y+eyeR.y)/2);ctx.rotate(angle);
+  const w1=ewL*1.72,w2=ewR*1.72,h1=w1*.67,h2=w2*.67,gap=eyeSpan;
+  const x1=-gap/2,x2=gap/2;
+  ctx.lineWidth=Math.max(3,faceW*.018);ctx.strokeStyle='#191824';ctx.fillStyle='rgba(26,28,39,.72)';
+  for(const [x,w,h] of [[x1,w1,h1],[x2,w2,h2]]){ctx.beginPath();ctx.roundRect(x-w/2,-h/2,w,h,h*.3);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-w*.3,-h*.18);ctx.lineTo(x+w*.3,-h*.18);ctx.lineWidth=Math.max(1,faceW*.006);ctx.strokeStyle='#ffffff99';ctx.stroke();ctx.strokeStyle='#191824';ctx.lineWidth=Math.max(3,faceW*.018)}
+  ctx.beginPath();ctx.moveTo(x1+w1/2,0);ctx.quadraticCurveTo(0,-faceW*.025,x2-w2/2,0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x1-w1/2,0);ctx.lineTo(x1-w1*.7,-h1*.06);ctx.moveTo(x2+w2/2,0);ctx.lineTo(x2+w2*.7,-h2*.06);ctx.stroke();ctx.restore();
  }
  if(lens==='crown'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);
-  const cw=faceW*.78,ch=faceW*.25,y=-faceW*.25;
-  ctx.lineWidth=Math.max(2,faceW*.012);ctx.fillStyle='#f6c342';ctx.strokeStyle='#8b5419';
-  ctx.beginPath();ctx.moveTo(-cw/2,y+ch);ctx.lineTo(-cw*.48,y+ch*.22);ctx.lineTo(-cw*.25,y+ch*.56);ctx.lineTo(0,y);ctx.lineTo(cw*.25,y+ch*.56);ctx.lineTo(cw*.48,y+ch*.22);ctx.lineTo(cw/2,y+ch);ctx.closePath();ctx.fill();ctx.stroke();
-  ctx.fillStyle='#e84e89';ctx.beginPath();ctx.roundRect(-cw/2,y+ch*.78,cw,ch*.23,ch*.08);ctx.fill();ctx.stroke();
-  for(const [x,col] of [[-cw*.25,'#70d8ef'],[0,'#fff0a5'],[cw*.25,'#7be0a2']]){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y+ch*.72,faceW*.025,0,Math.PI*2);ctx.fill()}ctx.restore();
+  ctx.save();ctx.translate(top.x,top.y);ctx.rotate(angle);const w=faceW*.92,h=faceW*.34,y=-faceW*.30;
+  ctx.shadowColor='#ffca45';ctx.shadowBlur=faceW*.05;ctx.fillStyle='#f6c342';ctx.strokeStyle='#9a5b19';ctx.lineWidth=Math.max(2,faceW*.012);
+  ctx.beginPath();ctx.moveTo(-w/2,y+h);ctx.lineTo(-w/2,y+h*.22);ctx.lineTo(-w*.25,y+h*.58);ctx.lineTo(-w*.08,y);ctx.lineTo(0,y+h*.43);ctx.lineTo(w*.12,y);ctx.lineTo(w*.27,y+h*.58);ctx.lineTo(w/2,y+h*.22);ctx.lineTo(w/2,y+h);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.shadowBlur=0;ctx.fillStyle='#e94e91';ctx.fillRect(-w/2,y+h*.83,w,h*.18);for(const [x,c] of [[-.25,'#6fe3ff'],[0,'#fff4b0'],[.25,'#8ff0bb']]){ctx.fillStyle=c;ctx.beginPath();ctx.arc(w*x,y+h*.77,faceW*.035,0,Math.PI*2);ctx.fill()}ctx.restore();
  }
  if(lens==='puppy'||lens==='kitty'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);ctx.font=(faceW*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-  if(lens==='puppy'){ctx.fillText('🐶',0,-faceW*.43);ctx.fillText('🐾',-faceW*.43,faceW*.04);ctx.fillText('🐾',faceW*.43,faceW*.04);ctx.fillText('🐽',nose.x-fore.x,nose.y-fore.y)}
-  else{ctx.fillText('🐱',0,-faceW*.43);ctx.fillText('💗',nose.x-fore.x,nose.y-fore.y)}ctx.restore();
+  ctx.save();ctx.translate(top.x,top.y);ctx.rotate(angle);const unit=faceW;
+  ctx.fillStyle=lens==='puppy'?'#8c563d':'#d78b9c';ctx.strokeStyle=lens==='puppy'?'#553326':'#8e536a';ctx.lineWidth=faceW*.018;
+  for(const side of [-1,1]){ctx.beginPath();if(lens==='puppy'){ctx.ellipse(side*unit*.38,-unit*.19,unit*.17,unit*.29,side*-.25,0,Math.PI*2)}else{ctx.moveTo(side*unit*.18,-unit*.16);ctx.lineTo(side*unit*.32,-unit*.55);ctx.lineTo(side*unit*.51,-unit*.17);ctx.closePath()}ctx.fill();ctx.stroke()}
+  if(lens==='kitty'){ctx.fillStyle='#f5b6c9';for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(side*unit*.25,-unit*.2);ctx.lineTo(side*unit*.32,-unit*.45);ctx.lineTo(side*unit*.43,-unit*.2);ctx.closePath();ctx.fill()}}
+  ctx.restore();
+  ctx.save();ctx.translate(nose.x,nose.y);ctx.fillStyle=lens==='puppy'?'#35252b':'#e987a6';ctx.beginPath();ctx.moveTo(-faceW*.055,-faceW*.025);ctx.quadraticCurveTo(0,-faceW*.09,faceW*.055,-faceW*.025);ctx.quadraticCurveTo(0,faceW*.07,-faceW*.055,-faceW*.025);ctx.fill();ctx.restore();
+  if(lens==='kitty'){ctx.save();ctx.strokeStyle='#ffffffdd';ctx.lineWidth=Math.max(1.5,faceW*.006);for(const side of [-1,1])for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(nose.x+side*faceW*.09,nose.y+faceW*(k-.8)*.035);ctx.lineTo(nose.x+side*faceW*.32,nose.y+faceW*(k-1)*.1);ctx.stroke()}ctx.restore()}
  }
  if(lens==='hearts'||lens==='flower'){
-  ctx.save();ctx.translate(fore.x,fore.y);ctx.rotate(roll);ctx.font=(faceW*.22)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-  if(lens==='hearts'){ctx.fillText('💗',-faceW*.48,-faceW*.24);ctx.fillText('💗',faceW*.48,-faceW*.24);ctx.fillText('✨',0,-faceW*.58)}
-  else{ctx.fillText('🌸',-faceW*.48,-faceW*.25);ctx.fillText('🌸',faceW*.48,-faceW*.25);ctx.fillText('🌼',0,-faceW*.55)}ctx.restore();
+  ctx.save();ctx.translate(top.x,top.y);ctx.rotate(angle);ctx.fillStyle=lens==='hearts'?'#ff4f91':'#ffb4d5';
+  for(const side of [-1,1]){const x=side*faceW*.47,y=-faceW*.30,r=faceW*.12;ctx.beginPath();ctx.moveTo(x,y+r*.9);ctx.bezierCurveTo(x-r*1.8,y-r*.1,x-r*.7,y-r*1.3,x,y-r*.35);ctx.bezierCurveTo(x+r*.7,y-r*1.3,x+r*1.8,y-r*.1,x,y+r*.9);ctx.fill()}
+  if(lens==='flower'){ctx.fillStyle='#ffe36d';ctx.beginPath();ctx.arc(0,-faceW*.48,faceW*.07,0,Math.PI*2);ctx.fill()}ctx.restore();
  }
- if(lens==='mustache'){ctx.save();ctx.translate(mouth.x,mouth.y+faceW*.03);ctx.font=(faceW*.34)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🥸',0,0);ctx.restore()}
-}
-function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resize();ctx.clearRect(0,0,fx.width,fx.height);if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length&&lens!=='none')drawLens(faces[0])}raf=requestAnimationFrame(frame)}
+ if(lens==='mustache'){
+  ctx.save();ctx.translate(mouth.x,mouth.y+faceW*.04);ctx.fillStyle='#34242a';ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-faceW*.16,-faceW*.15,-faceW*.28,-faceW*.02,-faceW*.31,faceW*.07);ctx.bezierCurveTo(-faceW*.15,faceW*.02,-faceW*.1,faceW*.18,0,faceW*.09);ctx.bezierCurveTo(faceW*.1,faceW*.18,faceW*.15,faceW*.02,faceW*.31,faceW*.07);ctx.bezierCurveTo(faceW*.28,-faceW*.02,faceW*.16,-faceW*.15,0,0);ctx.fill();ctx.restore();
+ }
+ if(lens==='beauty'||lens==='blush'){
+  ctx.save();ctx.fillStyle=lens==='beauty'?'rgba(255,190,210,.13)':'rgba(255,92,145,.24)';
+  for(const id of [50,280]){const q=pt(id);ctx.beginPath();ctx.ellipse(q.x,q.y,faceW*.105,faceW*.055,angle,0,Math.PI*2);ctx.fill()}ctx.restore();
+ }
+ if(lens==='freckles'){
+  ctx.save();ctx.fillStyle='#9c5b48';for(const side of [-1,1])for(let i=0;i<5;i++){const q=pt(side<0?50:280);const x=q.x+faceW*(side*.035+i*.013*side),y=q.y-faceW*.025+(i%2)*faceW*.025;ctx.beginPath();ctx.arc(x,y,faceW*.009,0,Math.PI*2);ctx.fill()}ctx.restore();
+ }
+ if(lens==='sparkle'){
+  ctx.save();ctx.strokeStyle='#fff1b8';ctx.lineWidth=faceW*.012;for(const id of [105,334,50,280]){const q=pt(id),r=faceW*.055;ctx.beginPath();ctx.moveTo(q.x-r,q.y);ctx.lineTo(q.x+r,q.y);ctx.moveTo(q.x,q.y-r);ctx.lineTo(q.x,q.y+r);ctx.stroke()}ctx.restore();
+ }
+}function frame(){if(!stream)return;if(video.readyState>=2){if(fx.width!==video.videoWidth||fx.height!==video.videoHeight)resize();ctx.clearRect(0,0,fx.width,fx.height);if(landmarker&&video.currentTime!==lastTime){lastTime=video.currentTime;results=landmarker.detectForVideo(video,performance.now())}const faces=results?.faceLandmarks||[];if(faces.length){if(lens==='beauty')faceSoftening(faces[0]);if(lens!=='none')drawLens(faces[0])}}raf=requestAnimationFrame(frame)}
 async function start(){try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Open in Chrome and allow camera permission');if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:1600}}});video.srcObject=stream;await video.play();camera.classList.remove('off');camera.classList.add('live');camera.classList.toggle('mirror',facing==='user');resize();say('Camera is on');loadFaceModel();cancelAnimationFrame(raf);frame()}catch(e){say(e.name==='NotAllowedError'?'Camera permission blocked — allow Camera for this website':e.message||'Could not start camera')}}
 function stop(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;cancelAnimationFrame(raf);camera.classList.add('off');camera.classList.remove('live')}
 function composedCanvas(){const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const g=c.getContext('2d');g.save();if(facing==='user'){g.translate(c.width,0);g.scale(-1,1)}g.filter=filterCss;g.drawImage(video,0,0,c.width,c.height);g.filter='none';g.drawImage(fx,0,0,c.width,c.height);g.restore();return c}
