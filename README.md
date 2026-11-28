@@ -17,3 +17,9 @@ After the first workflow run, check **Settings → Pages** and confirm **Build a
 - Capture and save a filtered photo
 
 This version does not include face tracking or Snapchat's proprietary lenses.
+
+
+## Current prototype update
+- Added face-following 3D eyewear styles: classic, gold frame, rose glass, and cat eye.
+- Improved 3D material response, reflections, accessory geometry, and smoothed face-following pose.
+- This is an experimental web prototype; camera and lens quality still need real-device testing.
