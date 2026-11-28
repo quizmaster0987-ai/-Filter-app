@@ -23,3 +23,5 @@ This version does not include face tracking or Snapchat's proprietary lenses.
 - Added face-following 3D eyewear styles: classic, gold frame, rose glass, and cat eye.
 - Improved 3D material response, reflections, accessory geometry, and smoothed face-following pose.
 - This is an experimental web prototype; camera and lens quality still need real-device testing.
+
+- Service-worker cache version bumped so updated camera code can replace older cached files.
